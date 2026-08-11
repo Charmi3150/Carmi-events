@@ -81,6 +81,11 @@ html,body{min-height:100%;font-family:var(--font);font-size:14px;background:var(
 .todo-cal-add{position:absolute;bottom:3px;right:3px;width:16px;height:16px;border-radius:50%;background:var(--pink);color:#fff;border:none;font-size:11px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;padding:0;}
 .todo-cal-day:hover .todo-cal-add{display:flex;}
 .todo-cal-day-popup{position:fixed;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:10px;box-shadow:var(--shadow-lg);z-index:500;min-width:200px;max-width:280px;}
+.todo-drag-handle{display:flex;align-items:center;justify-content:center;color:#c4c4c4;cursor:grab;touch-action:none;flex-shrink:0;font-size:13px;padding:2px 0;}
+.todo-drag-handle:active{cursor:grabbing;color:var(--ink);}
+.todo-cal-entry{touch-action:none;}
+.todo-cal-day.drag-over{background:var(--pink-pale)!important;border-color:var(--pink)!important;border-width:2px;}
+.todo-drag-ghost{position:fixed;z-index:9999;pointer-events:none;opacity:.85;box-shadow:var(--shadow-lg);border-radius:var(--r-sm);}
 .btn-dl:hover{color:#fff;border-color:rgba(255,255,255,0.3);}
 .btn-refresh{width:100%;padding:9px;background:var(--cobalt);color:#fff;border:none;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .15s;margin-bottom:6px;font-family:var(--font);}
 .btn-refresh:hover{background:var(--cobalt-lt);}
@@ -169,6 +174,18 @@ textarea.fi{min-height:70px;resize:vertical;}
   .page-header{padding:16px;}
   .page-body{padding:14px 16px;}
   .frow2{grid-template-columns:1fr;}
+  .todo-cols{grid-template-columns:1fr;gap:14px;}
+  .todo-persons{flex-wrap:wrap;gap:8px;row-gap:6px;}
+  .todo-person-tab{padding:8px 12px;font-size:12px;}
+  #push-sub-btn{margin-bottom:6px;font-size:11px;padding:6px 10px;}
+  .todo-cal-day{min-height:50px;padding:3px 4px;}
+  .todo-cal-dn{font-size:10px;margin-bottom:2px;}
+  .todo-cal-entry{font-size:8px;padding:1px 4px;gap:2px;}
+  .todo-cal-grid{gap:2px;}
+  .todo-cal-hd{font-size:9px;padding:3px 0;}
+  .todo-item{padding:7px 8px;gap:6px;}
+  .todo-item-text{font-size:12px;}
+  .todo-item-desc,.todo-item-date{font-size:10px;}
 }
 </style>
 </head>
@@ -1384,24 +1401,35 @@ function renderTodoCal(p) {
   const firstDay = (new Date(year,month,1).getDay()+6)%7;
   const dim = new Date(year,month+1,0).getDate();
   const today = new Date();
-  const allEntries = todoData[p].cal;
+  const allEntries = [
+    ...todoData[p].cal.map(c=>({...c, _kind:'cal'})),
+    ...todoData[p].deadlines.filter(d=>d.datum).map(d=>({...d, _kind:'deadline'})),
+    ...todoData[p].items.filter(i=>i.datum).map(i=>({...i, _kind:'item'})),
+  ];
 
   let html = TODO_DN.map(d=>`<div class="todo-cal-hd">${d}</div>`).join('');
 
   // Lege vakjes voor eerste dag
   for (let i=0;i<firstDay;i++) html+=`<div class="todo-cal-day other-month"></div>`;
 
+  const kindIcon = {cal:'ti-circle', deadline:'ti-flag', item:'ti-checklist'};
+  const kindOpen = {cal:'openTodoCalForm', deadline:'openTodoDeadlineForm', item:'openTodoItemForm'};
+
   for (let day=1;day<=dim;day++) {
     const key = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
     const isToday = today.getFullYear()===year && today.getMonth()===month && today.getDate()===day;
     const dayEntries = allEntries.filter(c=>c.datum===key);
-    const entriesHTML = dayEntries.slice(0,3).map(c=>`
-      <div class="todo-cal-entry${c.done?' done':''}" onclick="event.stopPropagation();openTodoCalForm('${p}','${key}',${c.id})" title="${c.titel}">
-        <i class="ti ${c.done?'ti-circle-check':'ti-circle'}"></i>
+    const entriesHTML = dayEntries.slice(0,3).map(c=>{
+      const openFn = kindOpen[c._kind];
+      const openArgs = c._kind==='cal' ? `'${p}','${key}',${c.id}` : `'${p}',${c.id}`;
+      return `
+      <div class="todo-cal-entry${c.done?' done':''}" onpointerdown="todoDragStart(event,'${p}','${c._kind}',${c.id})" onclick="event.stopPropagation();${openFn}(${openArgs})" title="${c.titel}">
+        <i class="ti ${c.done?'ti-circle-check':kindIcon[c._kind]}"></i>
         ${c.titel}
-      </div>`).join('');
+      </div>`;
+    }).join('');
     const moreHTML = dayEntries.length>3 ? `<div style="font-size:9px;color:#aaa;padding:1px 4px;">+${dayEntries.length-3} meer</div>` : '';
-    html += `<div class="todo-cal-day${isToday?' today':''}" onclick="openTodoCalForm('${p}','${key}',null)">
+    html += `<div class="todo-cal-day${isToday?' today':''}" data-date="${key}" onclick="openTodoCalForm('${p}','${key}',null)">
       <div class="todo-cal-dn">${day}</div>
       ${entriesHTML}${moreHTML}
       <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('${p}','${key}',null)" title="Toevoegen">+</button>
@@ -1417,10 +1445,12 @@ function renderTodoList(p) {
   if (!items.length) { el.innerHTML='<div style="font-size:12px;color:#aaa;text-align:center;padding:12px;">Geen to-dos</div>'; return; }
   el.innerHTML = items.map(it=>`
     <div class="todo-item${it.done?' done':''}">
+      <span class="todo-drag-handle" onpointerdown="todoDragStart(event,'${p}','item',${it.id})" title="Sleep naar kalender"><i class="ti ti-grip-vertical"></i></span>
       <input type="checkbox" class="todo-check" ${it.done?'checked':''} onchange="toggleTodoDone('${p}','item',${it.id},this.checked)">
       <div class="todo-item-body">
         <div class="todo-item-text">${it.titel}</div>
         ${it.omschrijving?`<div class="todo-item-desc">${it.omschrijving}</div>`:''}
+        ${it.datum?`<div class="todo-item-date"><i class="ti ti-calendar" style="font-size:9px;"></i> ${it.datum.split('-').reverse().join('/')}</div>`:''}
       </div>
       <div class="todo-item-actions">
         <button class="btn btn-secondary btn-xs" onclick="openTodoItemForm('${p}',${it.id})"><i class="ti ti-edit"></i></button>
@@ -1439,6 +1469,7 @@ function renderTodoDeadlines(p) {
     const isOverdue = !dl.done && dl.datum && dl.datum < today;
     const dateStr = dl.datum ? dl.datum.split('-').reverse().join('/') : '';
     return`<div class="todo-item${dl.done?' done':''}">
+      <span class="todo-drag-handle" onpointerdown="todoDragStart(event,'${p}','deadline',${dl.id})" title="Sleep naar kalender"><i class="ti ti-grip-vertical"></i></span>
       <input type="checkbox" class="todo-check" ${dl.done?'checked':''} onchange="toggleTodoDone('${p}','deadline',${dl.id},this.checked)">
       <div class="todo-item-body">
         <div class="todo-item-text">${dl.titel}</div>
@@ -1471,6 +1502,79 @@ function todoCalNav(person, dir) {
   todoCalState[person] = {year,month};
   renderTodoCal(person);
 }
+
+// ── SLEPEN NAAR KALENDER ──
+let _todoDragGhost = null;
+function todoDragStart(event, person, kind, id) {
+  if (event.pointerType === 'mouse' && event.button !== 0) return;
+  const el = event.currentTarget.closest('.todo-item, .todo-cal-entry');
+  if (!el) return;
+  const startX = event.clientX, startY = event.clientY;
+  let dragging = false;
+
+  function clearDragOver() {
+    document.querySelectorAll('.todo-cal-day.drag-over').forEach(d=>d.classList.remove('drag-over'));
+  }
+
+  function onMove(ev) {
+    const dx = ev.clientX-startX, dy = ev.clientY-startY;
+    if (!dragging && Math.hypot(dx,dy) > 8) {
+      dragging = true;
+      _todoDragGhost = el.cloneNode(true);
+      _todoDragGhost.className = (el.className+' todo-drag-ghost').trim();
+      _todoDragGhost.style.width = el.offsetWidth+'px';
+      document.body.appendChild(_todoDragGhost);
+      el.style.opacity = '0.35';
+    }
+    if (dragging) {
+      _todoDragGhost.style.left = (ev.clientX+14)+'px';
+      _todoDragGhost.style.top = (ev.clientY+14)+'px';
+      clearDragOver();
+      const target = document.elementFromPoint(ev.clientX, ev.clientY);
+      const dayEl = target && target.closest('.todo-cal-day[data-date]');
+      if (dayEl) dayEl.classList.add('drag-over');
+      ev.preventDefault();
+    }
+  }
+  function onUp(ev) {
+    document.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerup', onUp);
+    document.removeEventListener('pointercancel', onCancel);
+    el.style.opacity = '';
+    if (_todoDragGhost) { _todoDragGhost.remove(); _todoDragGhost = null; }
+    clearDragOver();
+    if (dragging) {
+      const target = document.elementFromPoint(ev.clientX, ev.clientY);
+      const dayEl = target && target.closest('.todo-cal-day[data-date]');
+      if (dayEl) moveTodoToDate(person, kind, id, dayEl.dataset.date);
+    }
+  }
+  function onCancel() {
+    document.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerup', onUp);
+    document.removeEventListener('pointercancel', onCancel);
+    el.style.opacity = '';
+    if (_todoDragGhost) { _todoDragGhost.remove(); _todoDragGhost = null; }
+    clearDragOver();
+  }
+  document.addEventListener('pointermove', onMove);
+  document.addEventListener('pointerup', onUp, {once:true});
+  document.addEventListener('pointercancel', onCancel, {once:true});
+}
+
+async function moveTodoToDate(person, kind, id, dateKey) {
+  const arrKey = kind==='item'?'items':kind==='deadline'?'deadlines':'cal';
+  const item = todoData[person][arrKey].find(x=>x.id===id);
+  if (!item) return;
+  item.datum = dateKey;
+  renderTodoCal(person);
+  if (kind==='item') renderTodoList(person);
+  else if (kind==='deadline') renderTodoDeadlines(person);
+  syncStatus('load');
+  await saveTodoItem(item);
+  syncStatus('ok');
+}
+// ── EINDE SLEPEN ──
 
 // ── TOGGLE DONE ──
 async function toggleTodoDone(person, type, id, done) {
@@ -1530,6 +1634,8 @@ function openTodoItemForm(person, id) {
     <input id="tm-titel" class="form-input" type="text" value="${item?.titel||''}" placeholder="Wat moet er gedaan worden?">
     <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin:10px 0 4px;">Omschrijving</label>
     <textarea id="tm-desc" class="form-input" style="min-height:55px;" placeholder="Extra info...">${item?.omschrijving||''}</textarea>
+    <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin:10px 0 4px;">Datum in kalender (optioneel)</label>
+    <input id="tm-datum" class="form-input" type="date" value="${item?.datum||''}">
     ${id?`<label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;cursor:pointer;">
       <input type="checkbox" id="tm-done" ${item?.done?'checked':''} style="accent-color:#4CAF50;width:15px;height:15px;"> Afgewerkt
     </label>`:''}`;
