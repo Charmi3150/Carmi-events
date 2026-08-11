@@ -1,0 +1,1543 @@
+<html lang="nl"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carmi — Events &amp; Planning</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Carmi Events">
+<meta name="theme-color" content="#0f1356">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&amp;family=DM+Serif+Display:ital@0;1&amp;display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#12175e;--cream:#f7f3ee;--cream2:#ede8e0;
+  --cobalt:#1a2c8f;--cobalt-dk:#0f1356;--cobalt-lt:#2d44c7;
+  --pink:#e8305a;--pink-lt:#f5a0b5;--pink-pale:#fde8ef;
+  --white:#ffffff;--border:rgba(13,13,13,0.1);--border-med:rgba(13,13,13,0.18);
+  --shadow:0 2px 16px rgba(0,0,0,0.07);--shadow-lg:0 8px 40px rgba(0,0,0,0.13);
+  --r:10px;--r-sm:6px;--r-pill:99px;
+  --font:'DM Sans',system-ui,sans-serif;--serif:'DM Serif Display',Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100%;font-family:var(--font);font-size:14px;background:var(--cream);color:var(--ink);}
+::selection{background:var(--pink);color:#fff;}
+
+/* ── LAYOUT ── */
+.app-shell{display:flex;min-height:100vh;}
+.sidebar{width:220px;flex-shrink:0;background:var(--cobalt-dk);display:flex;flex-direction:column;padding:0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sidebar-logo{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.sidebar-logo .brand{font-family:var(--serif);font-size:22px;color:#fff;line-height:1;}
+.sidebar-logo .sub{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.12em;margin-top:4px;}
+.sync-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:500;padding:3px 8px;border-radius:var(--r-pill);margin-top:10px;}
+.sync-ok{background:rgba(60,180,80,0.18);color:#5dcc78;}
+.sync-load{background:rgba(255,200,50,0.18);color:#f0c040;}
+.sync-err{background:rgba(220,50,50,0.18);color:#f07070;}
+.nav-section{padding:16px 12px 6px;font-size:9px;font-weight:700;color:rgba(180,195,255,0.5);text-transform:uppercase;letter-spacing:.1em;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13px;color:rgba(255,255,255,0.55);cursor:pointer;transition:all .15s;border-left:3px solid transparent;text-decoration:none;white-space:nowrap;}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,0.05);}
+.nav-item.active{color:#fff;border-left-color:var(--pink);background:rgba(255,255,255,0.07);}
+.nav-item i{font-size:16px;flex-shrink:0;}
+.sidebar-footer{margin-top:auto;padding:16px 12px;border-top:1px solid rgba(255,255,255,0.08);}
+.btn-dl{width:100%;padding:8px;background:transparent;color:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.12);border-radius:var(--r-sm);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .15s;font-family:var(--font);}
+/* ── TO-DO MODULE ── */
+.todo-persons{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:0;}
+.todo-person-tab{padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink);opacity:.45;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;}
+.todo-person-tab.active{opacity:1;border-bottom-color:var(--pink);}
+.todo-person-panel{display:none;padding:20px 0 0;}
+.todo-person-panel.active{display:block;}
+.todo-cols{display:grid;grid-template-columns:2fr 1fr 1fr;gap:20px;}
+@media(max-width:1100px){.todo-cols{grid-template-columns:1fr 1fr;}}
+.todo-col{background:var(--white);border-radius:var(--r);border:1px solid var(--border);padding:16px;}
+.todo-col-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink);opacity:.5;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.todo-items{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+.todo-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--cream);transition:all .15s;}
+.todo-item.done{background:#f0faf0;border-color:#8BC34A;}
+.todo-item.done .todo-item-text{text-decoration:line-through;color:#888;}
+.todo-item.done .todo-item-date{text-decoration:line-through;color:#aaa;}
+.todo-check{width:16px;height:16px;accent-color:#4CAF50;cursor:pointer;flex-shrink:0;margin-top:2px;}
+.todo-item-body{flex:1;min-width:0;}
+.todo-item-text{font-size:12px;font-weight:500;color:var(--ink);}
+.todo-item-desc{font-size:11px;color:#888;margin-top:2px;line-height:1.4;}
+.todo-item-date{font-size:10px;color:var(--pink);font-weight:600;margin-top:3px;}
+.todo-item-date.overdue{color:#e53935;}
+.todo-item-actions{display:flex;gap:3px;flex-shrink:0;}
+.todo-add-btn{width:100%;padding:7px;border:1px dashed var(--border-med);border-radius:var(--r-sm);background:none;color:var(--ink);opacity:.4;font-size:12px;cursor:pointer;transition:all .15s;font-family:var(--font);}
+.todo-add-btn:hover{opacity:.8;background:var(--cream2);}
+.todo-cal-wrap{width:100%;}
+.todo-cal-nav{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.todo-cal-nav span{font-size:14px;font-weight:700;flex:1;text-align:center;color:var(--ink);}
+.todo-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:6px;}
+.todo-cal-hd{font-size:10px;font-weight:700;text-align:center;color:#aaa;padding:4px 0;text-transform:uppercase;letter-spacing:.06em;}
+.todo-cal-day{min-height:72px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--cream);padding:4px 5px;cursor:pointer;transition:all .12s;position:relative;}
+.todo-cal-day:hover{background:var(--cream2);border-color:var(--border-med);}
+.todo-cal-day.today{border-color:var(--pink);border-width:2px;background:#fff8fa;}
+.todo-cal-day.today .todo-cal-dn{color:var(--pink);font-weight:800;}
+.todo-cal-day.other-month{opacity:.3;}
+.todo-cal-dn{font-size:11px;font-weight:600;color:#aaa;margin-bottom:3px;line-height:1;}
+.todo-cal-entry{font-size:9px;padding:2px 5px;border-radius:3px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#e8e4ff;color:#2A008B;display:flex;align-items:center;gap:3px;cursor:pointer;}
+.todo-cal-entry:hover{opacity:.8;}
+.todo-cal-entry.done{background:#d4edda;color:#1a5c28;text-decoration:line-through;opacity:.7;}
+.todo-cal-entry i{font-size:8px;flex-shrink:0;}
+.todo-cal-add{position:absolute;bottom:3px;right:3px;width:16px;height:16px;border-radius:50%;background:var(--pink);color:#fff;border:none;font-size:11px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;padding:0;}
+.todo-cal-day:hover .todo-cal-add{display:flex;}
+.todo-cal-day-popup{position:fixed;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:10px;box-shadow:var(--shadow-lg);z-index:500;min-width:200px;max-width:280px;}
+.btn-dl:hover{color:#fff;border-color:rgba(255,255,255,0.3);}
+.btn-refresh{width:100%;padding:9px;background:var(--cobalt);color:#fff;border:none;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .15s;margin-bottom:6px;font-family:var(--font);}
+.btn-refresh:hover{background:var(--cobalt-lt);}
+
+/* ── MAIN ── */
+.main-content{flex:1;min-width:0;}
+.page-header{padding:28px 32px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--white);flex-wrap:wrap;}
+.page-title{font-family:var(--serif);font-size:26px;color:var(--ink);line-height:1;}
+.page-body{padding:24px 32px;}
+.section{display:none;}.section.active{display:block;}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid;white-space:nowrap;font-family:var(--font);}
+.btn-primary{background:var(--ink);color:#fff;border-color:var(--ink);}
+.btn-primary:hover{background:var(--cobalt);}
+.btn-secondary{background:var(--white);color:var(--ink);border-color:var(--border-med);}
+.btn-secondary:hover{background:var(--cream2);}
+.btn-pink{background:var(--pink);color:#fff;border-color:var(--pink);}
+.btn-pink:hover{background:#c42046;}
+.btn-danger{background:none;color:#cc3333;border-color:#ddd;}
+.btn-danger:hover{border-color:#cc3333;background:#fff5f5;}
+.btn-sm{padding:5px 11px;font-size:11px;}
+.btn-xs{padding:3px 8px;font-size:10px;}
+
+/* ── TOAST ── */
+.toast-area{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+.toast{padding:10px 16px;background:var(--ink);color:#fff;border-radius:var(--r-sm);font-size:12px;font-weight:500;box-shadow:var(--shadow-lg);animation:tin .2s ease;max-width:280px;}
+.toast.success{background:#2d7a2d;}.toast.error{background:#a01835;}
+@keyframes tin{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* ── SECTION TOOLBAR ── */
+.sec-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
+
+/* ── ITEM CARDS ── */
+.item-list{display:flex;flex-direction:column;gap:10px;}
+.item-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;transition:box-shadow .13s;}
+.item-card:hover{box-shadow:var(--shadow);}
+.item-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;}
+.item-card-title{font-size:14px;font-weight:700;color:var(--ink);line-height:1.35;flex:1;}
+.item-card-meta{font-size:11px;color:#888;line-height:1.8;}
+.item-actions{display:flex;gap:4px;flex-shrink:0;}
+.extra-field{font-size:12px;color:#666;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);white-space:pre-wrap;line-height:1.7;}
+.empty-state{text-align:center;padding:48px 20px;color:#bbb;font-size:13px;}
+.empty-state i{font-size:32px;display:block;margin-bottom:10px;opacity:.35;}
+
+/* ── TAGS ── */
+.item-tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:var(--r-pill);white-space:nowrap;text-transform:uppercase;letter-spacing:.04em;}
+.tag-zemst{background:#dce8ff;color:#1a3a9f;}
+.tag-korbeek{background:#ede3f7;color:#5a2a8a;}
+.tag-aubel{background:#fff3e0;color:#7a3500;}
+.tag-all{background:var(--cream2);color:#444;}
+.date-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;background:var(--cream2);border:1px solid var(--border);border-radius:var(--r-sm);padding:3px 9px;margin:2px 3px 2px 0;}
+
+/* ── STATUS BADGES ── */
+.status-open{color:#2e7d32;font-weight:700;}
+.status-closed{color:#c62828;font-weight:700;}
+.status-special{color:#e65100;font-weight:700;}
+
+/* ── FORM MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:flex-start;justify-content:center;overflow-y:auto;padding:48px 16px;backdrop-filter:blur(3px);}
+.modal-bg.open{display:flex;}
+.modal{background:#fff;border-radius:14px;padding:24px;max-width:500px;width:94%;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
+.modal-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.modal-title{font-family:var(--serif);font-size:18px;color:var(--ink);}
+.modal-close{cursor:pointer;font-size:20px;color:#bbb;background:none;border:none;padding:2px;}
+.modal-close:hover{color:var(--ink);}
+.fl{font-size:11px;font-weight:600;color:#666;margin-bottom:4px;display:block;text-transform:uppercase;letter-spacing:.04em;}
+.fi{width:100%;padding:8px 10px;border:1px solid var(--border-med);border-radius:var(--r-sm);font-size:12px;background:#fff;color:var(--ink);margin-bottom:10px;font-family:var(--font);outline:none;transition:border-color .15s;}
+.fi:focus{border-color:var(--cobalt);}
+textarea.fi{min-height:70px;resize:vertical;}
+.frow2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.fbtnrow{display:flex;gap:6px;margin-top:8px;}
+.sect-label{font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;margin-top:12px;display:block;}
+
+/* ── MOBILE ── */
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--cobalt-dk);border-top:1px solid rgba(255,255,255,0.1);z-index:500;padding:0 4px;padding-bottom:max(8px,env(safe-area-inset-bottom));}
+.mobile-nav-row{display:flex;justify-content:space-around;}
+.mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px 2px;cursor:pointer;color:rgba(255,255,255,0.45);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;flex:1;text-align:center;border:none;background:none;font-family:var(--font);}
+.mobile-nav-item.active{color:#fff;}
+.mobile-nav-item i{font-size:20px;display:block;}
+
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .mobile-nav{display:block;}
+  .main-content{padding-bottom:80px;}
+  .page-header{padding:16px;}
+  .page-body{padding:14px 16px;}
+  .frow2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div id="toast-area" class="toast-area"></div>
+<div class="app-shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">Carmi</div>
+    <div class="sub">Events &amp; Planning</div>
+    <div class="sync-badge sync-ok" id="sync-status">● Gesynchroniseerd</div>
+  </div>
+  <div class="nav-section">Planning</div>
+  <a class="nav-item" data-tab="events" onclick="showTab(this)">
+    <i class="ti ti-star"></i><span>Events</span>
+  </a>
+  <a class="nav-item" data-tab="nieuwsbrief" onclick="showTab(this)">
+    <i class="ti ti-mail"></i><span>Nieuwsbrief</span>
+  </a>
+  <div class="nav-section">Team</div>
+  <a class="nav-item active" data-tab="todo" onclick="showTab(this)">
+    <i class="ti ti-checklist"></i><span>To-Do</span>
+  </a>
+  <div class="nav-section">Winkel</div>
+  <a class="nav-item" data-tab="openingsuren" onclick="showTab(this)">
+    <i class="ti ti-clock"></i><span>Openingsuren</span>
+  </a>
+  <a class="nav-item" data-tab="schermen" onclick="showTab(this)">
+    <i class="ti ti-device-tv"></i><span>Schermen</span>
+  </a>
+  <div class="sidebar-footer">
+    <button class="btn-refresh" onclick="loadAll()"><i class="ti ti-refresh"></i> Vernieuwen</button>
+    <button class="btn-dl" onclick="downloadHTML()"><i class="ti ti-download"></i> Download</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main-content">
+
+<!-- EVENTS -->
+<section id="sec-events" class="section">
+  <div class="page-header">
+    <h1 class="page-title">Events</h1>
+    <span style="font-size:12px;color:#aaa;background:var(--cream2);padding:3px 10px;border-radius:var(--r-pill);border:1px solid var(--border);" id="events-count">6 events</span>
+    <button class="btn btn-primary btn-sm" style="margin-left:auto;" onclick="openEventForm(null)"><i class="ti ti-plus"></i> Nieuw event</button>
+  </div>
+  <div class="page-body">
+    <div class="item-list" id="events-list"><div class="item-card"><div class="item-card-head"><div class="item-card-title">Fotoshoot 2602</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openEventForm(5)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteEvent(5)" title="Verwijderen"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-all">Zemst + Korbeek-Lo + Aubel</span><div style="margin-top:5px;"><span class="date-chip"><i class="ti ti-calendar-event" style="font-size:9px"></i> 07/08/2026</span></div></div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">Back to school</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openEventForm(3)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteEvent(3)" title="Verwijderen"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-aubel">Aubel</span><div style="margin-top:5px;"><span class="date-chip"><i class="ti ti-calendar-event" style="font-size:9px"></i> 17/08/2026 → 23/08/2026</span></div></div><div class="extra-field">Cadeautjes bij aankoop van kinderartikelen</div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">Back to school</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openEventForm(4)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteEvent(4)" title="Verwijderen"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-all">Zemst + Korbeek-Lo</span><div style="margin-top:5px;"><span class="date-chip"><i class="ti ti-calendar-event" style="font-size:9px"></i> 24/08/2026 → 31/08/2026</span></div></div><div class="extra-field">Cadeautjes bij aankoop van kinderartikelen</div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">Start nieuwe schooljaar</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openEventForm(7)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteEvent(7)" title="Verwijderen"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-aubel">Aubel</span><div style="margin-top:5px;"><span class="date-chip"><i class="ti ti-calendar-event" style="font-size:9px"></i> 24/08/2026</span></div></div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">Giveaway back to school?</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openEventForm(8)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteEvent(8)" title="Verwijderen"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-all">Zemst + Korbeek-Lo</span><div style="margin-top:5px;"><span class="date-chip"><i class="ti ti-calendar-event" style="font-size:9px"></i> 24/08/2026</span></div></div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">Start nieuwe schooljaar</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openEventForm(6)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteEvent(6)" title="Verwijderen"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-all">Zemst + Korbeek-Lo</span><div style="margin-top:5px;"><span class="date-chip"><i class="ti ti-calendar-event" style="font-size:9px"></i> 01/09/2026</span></div></div></div></div>
+  </div>
+</section>
+
+<!-- NIEUWSBRIEF -->
+<section id="sec-nieuwsbrief" class="section">
+  <div class="page-header">
+    <h1 class="page-title">Nieuwsbrief</h1>
+    <span style="font-size:12px;color:#aaa;background:var(--cream2);padding:3px 10px;border-radius:var(--r-pill);border:1px solid var(--border);" id="nb-count">2 nieuwsbrieven</span>
+    <button class="btn btn-primary btn-sm" style="margin-left:auto;" onclick="openNbForm(null)"><i class="ti ti-plus"></i> Toevoegen</button>
+  </div>
+  <div class="page-body">
+    <div class="item-list" id="nb-list"><div class="item-card"><div class="item-card-head"><div class="item-card-title">Braderie Aubel</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openNbForm(1)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteNb(1)"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-aubel">Aubel</span><span style="margin-left:6px;"><i class="ti ti-send" style="font-size:10px"></i> Verzenden: 17/06/2026</span></div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">Braderie Zemst+Kolo</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openNbForm(2)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteNb(2)"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-all">Zemst + Korbeek-Lo</span><span style="margin-left:6px;"><i class="ti ti-send" style="font-size:10px"></i> Verzenden: 21/06/2026</span></div></div></div>
+  </div>
+</section>
+
+<!-- OPENINGSUREN -->
+<section id="sec-openingsuren" class="section">
+  <div class="page-header">
+    <h1 class="page-title">Speciale Openingsuren</h1>
+    <span style="font-size:12px;color:#aaa;background:var(--cream2);padding:3px 10px;border-radius:var(--r-pill);border:1px solid var(--border);" id="uren-count">13 items</span>
+    <button class="btn btn-primary btn-sm" style="margin-left:auto;" onclick="openUrenForm(null)"><i class="ti ti-plus"></i> Toevoegen</button>
+  </div>
+  <div class="page-body">
+    <div class="item-list" id="uren-list"><div class="item-card"><div class="item-card-head"><div class="item-card-title">07/07/2026 — Dinsdag</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openUrenForm(11)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteUren(11)"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-all">Zemst + Korbeek-Lo</span><span class="status-closed" style="margin-left:8px;">🔴 Gesloten</span></div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">14/07/2026 — Dinsdag</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openUrenForm(12)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteUren(12)"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-all">Zemst + Korbeek-Lo</span><span class="status-closed" style="margin-left:8px;">🔴 Gesloten</span></div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">21/07/2026 — Dinsdag</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openUrenForm(10)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteUren(10)"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-all">Zemst + Korbeek-Lo + Aubel</span><span class="status-closed" style="margin-left:8px;">🔴 Gesloten</span><span style="color:#aaa;margin-left:8px;">Nationale feestdag</span></div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">28/07/2026 — Dinsdag</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openUrenForm(13)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteUren(13)"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-all">Zemst + Korbeek-Lo</span><span class="status-closed" style="margin-left:8px;">🔴 Gesloten</span></div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">04/08/2026 — Dinsdag</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openUrenForm(15)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteUren(15)"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-all">Zemst + Korbeek-Lo</span><span class="status-closed" style="margin-left:8px;">🔴 Gesloten</span></div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">11/08/2026 — Dinsdag</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openUrenForm(16)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteUren(16)"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-all">Zemst + Korbeek-Lo</span><span class="status-closed" style="margin-left:8px;">🔴 Gesloten</span></div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">15/08/2026 — Zaterdag</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openUrenForm(14)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteUren(14)"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-all">Zemst + Korbeek-Lo</span><span class="status-open" style="margin-left:8px;">🟢 Open</span><span style="color:#aaa;margin-left:8px;">OLV Hemelvaart</span></div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">15/08/2026 — Zaterdag</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openUrenForm(22)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteUren(22)"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-aubel">Aubel</span><span class="status-closed" style="margin-left:8px;">🔴 Gesloten</span><span style="color:#aaa;margin-left:8px;">OLV. Hemelvaart</span></div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">18/08/2026 — Dinsdag</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openUrenForm(17)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteUren(17)"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-all">Zemst + Korbeek-Lo</span><span class="status-closed" style="margin-left:8px;">🔴 Gesloten</span></div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">25/08/2026 — Dinsdag</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openUrenForm(18)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteUren(18)"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-all">Zemst + Korbeek-Lo</span><span class="status-open" style="margin-left:8px;">🟢 Open</span></div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">01/09/2026 — Dinsdag</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openUrenForm(19)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteUren(19)"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-all">Zemst + Korbeek-Lo</span><span class="status-closed" style="margin-left:8px;">🔴 Gesloten</span></div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">08/09/2026 — Dinsdag</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openUrenForm(20)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteUren(20)"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-all">Zemst + Korbeek-Lo</span><span class="status-closed" style="margin-left:8px;">🔴 Gesloten</span></div></div><div class="item-card"><div class="item-card-head"><div class="item-card-title">15/09/2026 — Dinsdag</div><div class="item-actions"><button class="btn btn-secondary btn-xs" onclick="openUrenForm(21)"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-xs" onclick="deleteUren(21)"><i class="ti ti-trash"></i></button></div></div><div class="item-card-meta"><span class="item-tag tag-all">Zemst + Korbeek-Lo</span><span class="status-closed" style="margin-left:8px;">🔴 Gesloten</span></div></div></div>
+  </div>
+</section>
+
+<!-- SCHERMEN -->
+<section id="sec-schermen" class="section">
+  <div class="page-header">
+    <h1 class="page-title">Schermen Winkels</h1>
+    <span style="font-size:12px;color:#aaa;background:var(--cream2);padding:3px 10px;border-radius:var(--r-pill);border:1px solid var(--border);" id="schermen-count">0 items</span>
+    <button class="btn btn-primary btn-sm" style="margin-left:auto;" onclick="openSchermForm(null)"><i class="ti ti-plus"></i> Item toevoegen</button>
+  </div>
+  <div class="page-body">
+    <div class="item-list" id="schermen-list"><div class="empty-state"><i class="ti ti-device-tv"></i>Nog geen items.</div></div>
+  </div>
+</section>
+
+<!-- TO-DO -->
+<section id="sec-todo" class="section active">
+  <div class="page-header">
+    <h1 class="page-title">To-Do</h1>
+  </div>
+  <div class="page-body" style="padding-top:0;">
+    <!-- Persoon tabs -->
+    <div class="todo-persons">
+      <div class="todo-person-tab" onclick="switchTodoPerson('charlotte',this)">Charlotte</div>
+      <div class="todo-person-tab" onclick="switchTodoPerson('magali',this)">Magali</div>
+      <div class="todo-person-tab active" onclick="switchTodoPerson('sofie',this)">Sofie</div>
+    </div>
+    <!-- Charlotte -->
+    <div class="todo-person-panel" id="todo-panel-charlotte">
+      <div class="todo-cols">
+        <div class="todo-col">
+          <div class="todo-col-title"><i class="ti ti-calendar-event"></i> Kalender</div>
+          <div class="todo-cal-nav">
+            <button class="btn btn-secondary btn-xs" onclick="todoCalNav('charlotte',-1)"><i class="ti ti-chevron-left"></i></button>
+            <span id="todo-cal-title-charlotte">Augustus 2026</span>
+            <button class="btn btn-secondary btn-xs" onclick="todoCalNav('charlotte',1)"><i class="ti ti-chevron-right"></i></button>
+          </div>
+          <div class="todo-cal-grid" id="todo-cal-charlotte"><div class="todo-cal-hd">Ma</div><div class="todo-cal-hd">Di</div><div class="todo-cal-hd">Wo</div><div class="todo-cal-hd">Do</div><div class="todo-cal-hd">Vr</div><div class="todo-cal-hd">Za</div><div class="todo-cal-hd">Zo</div><div class="todo-cal-day other-month"></div><div class="todo-cal-day other-month"></div><div class="todo-cal-day other-month"></div><div class="todo-cal-day other-month"></div><div class="todo-cal-day other-month"></div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-01',null)">
+      <div class="todo-cal-dn">1</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-01',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-02',null)">
+      <div class="todo-cal-dn">2</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-02',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-03',null)">
+      <div class="todo-cal-dn">3</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-03',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-04',null)">
+      <div class="todo-cal-dn">4</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-04',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-05',null)">
+      <div class="todo-cal-dn">5</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-05',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-06',null)">
+      <div class="todo-cal-dn">6</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-06',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-07',null)">
+      <div class="todo-cal-dn">7</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-07',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-08',null)">
+      <div class="todo-cal-dn">8</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-08',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-09',null)">
+      <div class="todo-cal-dn">9</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-09',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-10',null)">
+      <div class="todo-cal-dn">10</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-10',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day today" onclick="openTodoCalForm('charlotte','2026-08-11',null)">
+      <div class="todo-cal-dn">11</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-11',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-12',null)">
+      <div class="todo-cal-dn">12</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-12',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-13',null)">
+      <div class="todo-cal-dn">13</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-13',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-14',null)">
+      <div class="todo-cal-dn">14</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-14',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-15',null)">
+      <div class="todo-cal-dn">15</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-15',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-16',null)">
+      <div class="todo-cal-dn">16</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-16',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-17',null)">
+      <div class="todo-cal-dn">17</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-17',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-18',null)">
+      <div class="todo-cal-dn">18</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-18',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-19',null)">
+      <div class="todo-cal-dn">19</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-19',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-20',null)">
+      <div class="todo-cal-dn">20</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-20',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-21',null)">
+      <div class="todo-cal-dn">21</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-21',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-22',null)">
+      <div class="todo-cal-dn">22</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-22',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-23',null)">
+      <div class="todo-cal-dn">23</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-23',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-24',null)">
+      <div class="todo-cal-dn">24</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-24',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-25',null)">
+      <div class="todo-cal-dn">25</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-25',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-26',null)">
+      <div class="todo-cal-dn">26</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-26',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-27',null)">
+      <div class="todo-cal-dn">27</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-27',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-28',null)">
+      <div class="todo-cal-dn">28</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-28',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-29',null)">
+      <div class="todo-cal-dn">29</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-29',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-30',null)">
+      <div class="todo-cal-dn">30</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-30',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('charlotte','2026-08-31',null)">
+      <div class="todo-cal-dn">31</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('charlotte','2026-08-31',null)" title="Toevoegen">+</button>
+    </div></div>
+          <button class="todo-add-btn" onclick="openTodoCalForm('charlotte',null,null)"><i class="ti ti-plus"></i> Item toevoegen</button>
+        </div>
+        <div class="todo-col">
+          <div class="todo-col-title"><i class="ti ti-list-check"></i> To-Do lijst</div>
+          <div class="todo-items" id="todo-list-charlotte"><div style="font-size:12px;color:#aaa;text-align:center;padding:12px;">Geen to-dos</div></div>
+          <button class="todo-add-btn" onclick="openTodoItemForm('charlotte',null)"><i class="ti ti-plus"></i> To-do toevoegen</button>
+        </div>
+        <div class="todo-col">
+          <div class="todo-col-title"><i class="ti ti-flag"></i> Deadlines</div>
+          <div class="todo-items" id="todo-deadlines-charlotte"><div style="font-size:12px;color:#aaa;text-align:center;padding:12px;">Geen deadlines</div></div>
+          <button class="todo-add-btn" onclick="openTodoDeadlineForm('charlotte',null)"><i class="ti ti-plus"></i> Deadline toevoegen</button>
+        </div>
+      </div>
+    </div>
+    <!-- Magali -->
+    <div class="todo-person-panel" id="todo-panel-magali">
+      <div class="todo-cols">
+        <div class="todo-col">
+          <div class="todo-col-title"><i class="ti ti-calendar-event"></i> Kalender</div>
+          <div class="todo-cal-nav">
+            <button class="btn btn-secondary btn-xs" onclick="todoCalNav('magali',-1)"><i class="ti ti-chevron-left"></i></button>
+            <span id="todo-cal-title-magali">Augustus 2026</span>
+            <button class="btn btn-secondary btn-xs" onclick="todoCalNav('magali',1)"><i class="ti ti-chevron-right"></i></button>
+          </div>
+          <div class="todo-cal-grid" id="todo-cal-magali"><div class="todo-cal-hd">Ma</div><div class="todo-cal-hd">Di</div><div class="todo-cal-hd">Wo</div><div class="todo-cal-hd">Do</div><div class="todo-cal-hd">Vr</div><div class="todo-cal-hd">Za</div><div class="todo-cal-hd">Zo</div><div class="todo-cal-day other-month"></div><div class="todo-cal-day other-month"></div><div class="todo-cal-day other-month"></div><div class="todo-cal-day other-month"></div><div class="todo-cal-day other-month"></div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-01',null)">
+      <div class="todo-cal-dn">1</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-01',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-02',null)">
+      <div class="todo-cal-dn">2</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-02',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-03',null)">
+      <div class="todo-cal-dn">3</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-03',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-04',null)">
+      <div class="todo-cal-dn">4</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-04',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-05',null)">
+      <div class="todo-cal-dn">5</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-05',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-06',null)">
+      <div class="todo-cal-dn">6</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-06',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-07',null)">
+      <div class="todo-cal-dn">7</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-07',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-08',null)">
+      <div class="todo-cal-dn">8</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-08',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-09',null)">
+      <div class="todo-cal-dn">9</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-09',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-10',null)">
+      <div class="todo-cal-dn">10</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-10',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day today" onclick="openTodoCalForm('magali','2026-08-11',null)">
+      <div class="todo-cal-dn">11</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-11',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-12',null)">
+      <div class="todo-cal-dn">12</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-12',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-13',null)">
+      <div class="todo-cal-dn">13</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-13',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-14',null)">
+      <div class="todo-cal-dn">14</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-14',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-15',null)">
+      <div class="todo-cal-dn">15</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-15',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-16',null)">
+      <div class="todo-cal-dn">16</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-16',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-17',null)">
+      <div class="todo-cal-dn">17</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-17',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-18',null)">
+      <div class="todo-cal-dn">18</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-18',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-19',null)">
+      <div class="todo-cal-dn">19</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-19',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-20',null)">
+      <div class="todo-cal-dn">20</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-20',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-21',null)">
+      <div class="todo-cal-dn">21</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-21',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-22',null)">
+      <div class="todo-cal-dn">22</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-22',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-23',null)">
+      <div class="todo-cal-dn">23</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-23',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-24',null)">
+      <div class="todo-cal-dn">24</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-24',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-25',null)">
+      <div class="todo-cal-dn">25</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-25',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-26',null)">
+      <div class="todo-cal-dn">26</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-26',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-27',null)">
+      <div class="todo-cal-dn">27</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-27',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-28',null)">
+      <div class="todo-cal-dn">28</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-28',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-29',null)">
+      <div class="todo-cal-dn">29</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-29',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-30',null)">
+      <div class="todo-cal-dn">30</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-30',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('magali','2026-08-31',null)">
+      <div class="todo-cal-dn">31</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('magali','2026-08-31',null)" title="Toevoegen">+</button>
+    </div></div>
+          <button class="todo-add-btn" onclick="openTodoCalForm('magali',null,null)"><i class="ti ti-plus"></i> Item toevoegen</button>
+        </div>
+        <div class="todo-col">
+          <div class="todo-col-title"><i class="ti ti-list-check"></i> To-Do lijst</div>
+          <div class="todo-items" id="todo-list-magali"><div style="font-size:12px;color:#aaa;text-align:center;padding:12px;">Geen to-dos</div></div>
+          <button class="todo-add-btn" onclick="openTodoItemForm('magali',null)"><i class="ti ti-plus"></i> To-do toevoegen</button>
+        </div>
+        <div class="todo-col">
+          <div class="todo-col-title"><i class="ti ti-flag"></i> Deadlines</div>
+          <div class="todo-items" id="todo-deadlines-magali"><div style="font-size:12px;color:#aaa;text-align:center;padding:12px;">Geen deadlines</div></div>
+          <button class="todo-add-btn" onclick="openTodoDeadlineForm('magali',null)"><i class="ti ti-plus"></i> Deadline toevoegen</button>
+        </div>
+      </div>
+    </div>
+    <!-- Sofie -->
+    <div class="todo-person-panel active" id="todo-panel-sofie">
+      <div class="todo-cols">
+        <div class="todo-col">
+          <div class="todo-col-title"><i class="ti ti-calendar-event"></i> Kalender</div>
+          <div class="todo-cal-nav">
+            <button class="btn btn-secondary btn-xs" onclick="todoCalNav('sofie',-1)"><i class="ti ti-chevron-left"></i></button>
+            <span id="todo-cal-title-sofie">Augustus 2026</span>
+            <button class="btn btn-secondary btn-xs" onclick="todoCalNav('sofie',1)"><i class="ti ti-chevron-right"></i></button>
+          </div>
+          <div class="todo-cal-grid" id="todo-cal-sofie"><div class="todo-cal-hd">Ma</div><div class="todo-cal-hd">Di</div><div class="todo-cal-hd">Wo</div><div class="todo-cal-hd">Do</div><div class="todo-cal-hd">Vr</div><div class="todo-cal-hd">Za</div><div class="todo-cal-hd">Zo</div><div class="todo-cal-day other-month"></div><div class="todo-cal-day other-month"></div><div class="todo-cal-day other-month"></div><div class="todo-cal-day other-month"></div><div class="todo-cal-day other-month"></div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-01',null)">
+      <div class="todo-cal-dn">1</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-01',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-02',null)">
+      <div class="todo-cal-dn">2</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-02',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-03',null)">
+      <div class="todo-cal-dn">3</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-03',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-04',null)">
+      <div class="todo-cal-dn">4</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-04',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-05',null)">
+      <div class="todo-cal-dn">5</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-05',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-06',null)">
+      <div class="todo-cal-dn">6</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-06',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-07',null)">
+      <div class="todo-cal-dn">7</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-07',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-08',null)">
+      <div class="todo-cal-dn">8</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-08',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-09',null)">
+      <div class="todo-cal-dn">9</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-09',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-10',null)">
+      <div class="todo-cal-dn">10</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-10',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day today" onclick="openTodoCalForm('sofie','2026-08-11',null)">
+      <div class="todo-cal-dn">11</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-11',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-12',null)">
+      <div class="todo-cal-dn">12</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-12',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-13',null)">
+      <div class="todo-cal-dn">13</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-13',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-14',null)">
+      <div class="todo-cal-dn">14</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-14',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-15',null)">
+      <div class="todo-cal-dn">15</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-15',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-16',null)">
+      <div class="todo-cal-dn">16</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-16',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-17',null)">
+      <div class="todo-cal-dn">17</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-17',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-18',null)">
+      <div class="todo-cal-dn">18</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-18',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-19',null)">
+      <div class="todo-cal-dn">19</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-19',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-20',null)">
+      <div class="todo-cal-dn">20</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-20',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-21',null)">
+      <div class="todo-cal-dn">21</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-21',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-22',null)">
+      <div class="todo-cal-dn">22</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-22',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-23',null)">
+      <div class="todo-cal-dn">23</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-23',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-24',null)">
+      <div class="todo-cal-dn">24</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-24',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-25',null)">
+      <div class="todo-cal-dn">25</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-25',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-26',null)">
+      <div class="todo-cal-dn">26</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-26',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-27',null)">
+      <div class="todo-cal-dn">27</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-27',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-28',null)">
+      <div class="todo-cal-dn">28</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-28',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-29',null)">
+      <div class="todo-cal-dn">29</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-29',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-30',null)">
+      <div class="todo-cal-dn">30</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-30',null)" title="Toevoegen">+</button>
+    </div><div class="todo-cal-day" onclick="openTodoCalForm('sofie','2026-08-31',null)">
+      <div class="todo-cal-dn">31</div>
+      
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('sofie','2026-08-31',null)" title="Toevoegen">+</button>
+    </div></div>
+          <button class="todo-add-btn" onclick="openTodoCalForm('sofie',null,null)"><i class="ti ti-plus"></i> Item toevoegen</button>
+        </div>
+        <div class="todo-col">
+          <div class="todo-col-title"><i class="ti ti-list-check"></i> To-Do lijst</div>
+          <div class="todo-items" id="todo-list-sofie"><div style="font-size:12px;color:#aaa;text-align:center;padding:12px;">Geen to-dos</div></div>
+          <button class="todo-add-btn" onclick="openTodoItemForm('sofie',null)"><i class="ti ti-plus"></i> To-do toevoegen</button>
+        </div>
+        <div class="todo-col">
+          <div class="todo-col-title"><i class="ti ti-flag"></i> Deadlines</div>
+          <div class="todo-items" id="todo-deadlines-sofie"><div style="font-size:12px;color:#aaa;text-align:center;padding:12px;">Laden...</div></div>
+          <button class="todo-add-btn" onclick="openTodoDeadlineForm('sofie',null)"><i class="ti ti-plus"></i> Deadline toevoegen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TODO MODALS -->
+<div class="modal-overlay" id="todo-modal-bg" onclick="if(event.target===this)closeTodoModal()" style="display: none; position: fixed; inset: 0px; background: rgba(0, 0, 0, 0.5); z-index: 1000; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 40px 16px;">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:440px;width:100%;margin:0 auto;">
+    <div class="modal-header">
+      <h2 class="modal-title" id="todo-modal-title">Deadline toevoegen</h2>
+      <button class="modal-close" onclick="closeTodoModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" id="todo-modal-body">
+    <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin-bottom:4px;">Titel *</label>
+    <input id="tm-titel" class="form-input" type="text" value="" placeholder="bv. Campagne afwerken...">
+    <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin:10px 0 4px;">Deadline datum *</label>
+    <input id="tm-datum" class="form-input" type="date" value="">
+    <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin:10px 0 4px;">Omschrijving</label>
+    <textarea id="tm-desc" class="form-input" style="min-height:55px;" placeholder="Wat moet er precies gedaan zijn?"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeTodoModal()">Annuleren</button>
+      <button class="btn btn-primary" onclick="saveTodoModal()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- MOBILE NAV -->
+<nav class="mobile-nav">
+  <div class="mobile-nav-row">
+    <button class="mobile-nav-item active" id="mn-events" onclick="mobileTab('events',this)">
+      <i class="ti ti-star"></i><span>Events</span>
+    </button>
+    <button class="mobile-nav-item" id="mn-nieuwsbrief" onclick="mobileTab('nieuwsbrief',this)">
+      <i class="ti ti-mail"></i><span>Nieuwsbrief</span>
+    </button>
+    <button class="mobile-nav-item" id="mn-openingsuren" onclick="mobileTab('openingsuren',this)">
+      <i class="ti ti-clock"></i><span>Uren</span>
+    </button>
+    <button class="mobile-nav-item" id="mn-schermen" onclick="mobileTab('schermen',this)">
+      <i class="ti ti-device-tv"></i><span>Schermen</span>
+    </button>
+  </div>
+</nav>
+
+<!-- EVENT MODAL -->
+<div class="modal-bg" id="event-bg" onclick="if(event.target===this)closeEventForm()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="event-form-title">Nieuw event</div>
+      <button class="modal-close" onclick="closeEventForm()">×</button>
+    </div>
+    <label class="fl">Titel *</label>
+    <input class="fi" id="ev-titel" type="text" placeholder="Naam van het event...">
+    <label class="fl">Winkel(s)</label>
+    <select class="fi" id="ev-winkel">
+      <option value="Zemst">Zemst</option>
+      <option value="Korbeek-Lo">Korbeek-Lo</option>
+      <option value="Aubel">Aubel</option>
+      <option value="Zemst + Korbeek-Lo">Zemst + Korbeek-Lo</option>
+      <option value="Zemst + Korbeek-Lo + Aubel">Alle winkels</option>
+    </select>
+    <div class="frow2">
+      <div><label class="fl">Van datum *</label><input class="fi" type="date" id="ev-datum-van" style="margin-bottom:0"></div>
+      <div><label class="fl">Tot datum</label><input class="fi" type="date" id="ev-datum-tot" style="margin-bottom:0"></div>
+    </div>
+    <label class="fl" style="margin-top:10px;">Extra info</label>
+    <textarea class="fi" id="ev-extra" placeholder="Beschrijving, opmerkingen, to-do..."></textarea>
+    <div class="fbtnrow">
+      <button class="btn btn-pink" onclick="saveEvent()"><i class="ti ti-check"></i> Opslaan</button>
+      <button class="btn btn-secondary" onclick="closeEventForm()">Annuleren</button>
+    </div>
+  </div>
+</div>
+
+<!-- NIEUWSBRIEF MODAL -->
+<div class="modal-bg" id="nb-bg" onclick="if(event.target===this)closeNbForm()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="nb-form-title">Nieuwe nieuwsbrief</div>
+      <button class="modal-close" onclick="closeNbForm()">×</button>
+    </div>
+    <label class="fl">Onderwerp *</label>
+    <input class="fi" id="nb-onderwerp" type="text" placeholder="Onderwerp van de nieuwsbrief...">
+    <label class="fl">Verzenddatum</label>
+    <input class="fi" id="nb-datum" type="date">
+    <label class="fl">Winkel(s)</label>
+    <select class="fi" id="nb-winkel">
+      <option value="Zemst">Zemst</option>
+      <option value="Korbeek-Lo">Korbeek-Lo</option>
+      <option value="Aubel">Aubel</option>
+      <option value="Zemst + Korbeek-Lo">Zemst + Korbeek-Lo</option>
+      <option value="Zemst + Korbeek-Lo + Aubel">Alle winkels</option>
+    </select>
+    <label class="fl">Extra info</label>
+    <textarea class="fi" id="nb-extra" placeholder="Inhoud, opmerkingen, links..."></textarea>
+    <div class="fbtnrow">
+      <button class="btn btn-pink" onclick="saveNb()"><i class="ti ti-check"></i> Opslaan</button>
+      <button class="btn btn-secondary" onclick="closeNbForm()">Annuleren</button>
+    </div>
+  </div>
+</div>
+
+<!-- OPENINGSUREN MODAL -->
+<div class="modal-bg" id="uren-bg" onclick="if(event.target===this)closeUrenForm()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="uren-form-title">Speciale openingsuren</div>
+      <button class="modal-close" onclick="closeUrenForm()">×</button>
+    </div>
+    <label class="fl">Datum *</label>
+    <input class="fi" id="ur-datum" type="date">
+    <label class="fl">Dag van de week</label>
+    <select class="fi" id="ur-dag">
+      <option value="">— Automatisch —</option>
+      <option>Maandag</option><option>Dinsdag</option><option>Woensdag</option>
+      <option>Donderdag</option><option>Vrijdag</option><option>Zaterdag</option><option>Zondag</option>
+    </select>
+    <label class="fl">Status</label>
+    <select class="fi" id="ur-status" onchange="toggleUrenWrap()">
+      <option value="gesloten">Gesloten</option>
+      <option value="open">Open</option>
+      <option value="aangepast">Aangepaste uren</option>
+    </select>
+    <div id="ur-uren-wrap" style="display:none;">
+      <div class="frow2">
+        <div><label class="fl">Van</label><input class="fi" type="time" id="ur-van" style="margin-bottom:0"></div>
+        <div><label class="fl">Tot</label><input class="fi" type="time" id="ur-tot" style="margin-bottom:0"></div>
+      </div>
+    </div>
+    <label class="fl" style="margin-top:8px;">Winkel(s)</label>
+    <select class="fi" id="ur-winkel">
+      <option value="Zemst">Zemst</option>
+      <option value="Korbeek-Lo">Korbeek-Lo</option>
+      <option value="Aubel">Aubel</option>
+      <option value="Zemst + Korbeek-Lo">Zemst + Korbeek-Lo</option>
+      <option value="Zemst + Korbeek-Lo + Aubel">Alle winkels</option>
+    </select>
+    <label class="fl">Reden / opmerking</label>
+    <input class="fi" id="ur-reden" type="text" placeholder="bv. Feestdag, verbouwing...">
+    <label class="fl">Extra info</label>
+    <textarea class="fi" id="ur-extra" placeholder="Extra opmerkingen..." style="min-height:55px;"></textarea>
+    <div class="fbtnrow">
+      <button class="btn btn-pink" onclick="saveUren()"><i class="ti ti-check"></i> Opslaan</button>
+      <button class="btn btn-secondary" onclick="closeUrenForm()">Annuleren</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCHERMEN MODAL -->
+<div class="modal-bg" id="scherm-bg" onclick="if(event.target===this)closeSchermForm()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="scherm-form-title">Nieuw schermitem</div>
+      <button class="modal-close" onclick="closeSchermForm()">×</button>
+    </div>
+    <label class="fl">Onderwerp *</label>
+    <input class="fi" id="sc-onderwerp" type="text" placeholder="Onderwerp...">
+    <label class="fl">Winkel(s)</label>
+    <select class="fi" id="sc-winkel">
+      <option value="Zemst">Zemst</option>
+      <option value="Korbeek-Lo">Korbeek-Lo</option>
+      <option value="Aubel">Aubel</option>
+      <option value="Zemst + Korbeek-Lo">Zemst + Korbeek-Lo</option>
+      <option value="Zemst + Korbeek-Lo + Aubel">Alle winkels</option>
+    </select>
+    <label class="fl">Datum</label>
+    <input class="fi" id="sc-datum" type="date">
+    <label class="fl">Extra info</label>
+    <textarea class="fi" id="sc-extra" placeholder="Extra opmerkingen..."></textarea>
+    <div class="fbtnrow">
+      <button class="btn btn-pink" onclick="saveScherm()"><i class="ti ti-check"></i> Opslaan</button>
+      <button class="btn btn-secondary" onclick="closeSchermForm()">Annuleren</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://vezwkmucythpldeltzvd.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlendrbXVjeXRocGxkZWx0enZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMzE4NjgsImV4cCI6MjA5NTYwNzg2OH0.LwpI-TRfARSxQzR8zl3_MpVSVzWeTEMUSlS8sieMiA4';
+
+let eventsData=[], nbData=[], urenData=[], schermenData=[];
+let editingEventId=null, editingNbId=null, editingUrenId=null, editingSchermId=null;
+const WEEKDAGEN=['Zondag','Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Zaterdag'];
+
+function toast(msg, type='') {
+  const area = document.getElementById('toast-area');
+  const el = document.createElement('div');
+  el.className = 'toast' + (type ? ' '+type : '');
+  el.textContent = msg;
+  area.appendChild(el);
+  setTimeout(() => el.remove(), 2800);
+}
+
+function syncStatus(state, msg) {
+  const el = document.getElementById('sync-status');
+  el.textContent = state==='ok' ? '● '+msg : state==='err' ? '⚠ '+msg : '○ '+msg;
+  el.className = 'sync-badge ' + (state==='ok'?'sync-ok':state==='err'?'sync-err':'sync-load');
+}
+
+async function sb(path, opts={}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: {'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':opts.prefer||'return=representation',...(opts.headers||{})},
+    method: opts.method||'GET', body: opts.body||undefined
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const t = await res.text(); return t ? JSON.parse(t) : [];
+}
+
+async function loadAll() {
+  syncStatus('load','Laden...');
+  try {
+    const [dbE, dbN, dbU, dbS] = await Promise.all([
+      sb('events?order=datum_van.asc').catch(()=>[]),
+      sb('nieuwsbrieven?order=datum.asc').catch(()=>[]),
+      sb('openingsuren?order=datum.asc').catch(()=>[]),
+      sb('schermen?order=id.asc').catch(()=>[])
+    ]);
+    eventsData=dbE; nbData=dbN; urenData=dbU; schermenData=dbS;
+    syncStatus('ok','Gesynchroniseerd');
+    renderEvents(); renderNb(); renderUren(); renderSchermen();
+    loadTodo();
+  } catch(e) {
+    syncStatus('err','Verbindingsfout');
+    // Lokale fallback
+    renderEvents(); renderNb(); renderUren(); renderSchermen();
+  }
+}
+
+function showTab(el) {
+  const t = el.dataset.tab;
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+t).classList.add('active');
+  el.classList.add('active');
+  if (t === 'todo') renderAllTodo();
+}
+
+function mobileTab(tab, btn) {
+  const desktopLink = document.querySelector('.nav-item[data-tab="'+tab+'"]');
+  if (desktopLink) showTab(desktopLink);
+  document.querySelectorAll('.mobile-nav-item').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+function fmtDate(d) {
+  if (!d) return '';
+  const p = d.split('-');
+  return p.length===3 ? p[2]+'/'+p[1]+'/'+p[0] : d;
+}
+function dagVanDatum(d) {
+  if (!d) return '';
+  const dt = new Date(d);
+  return isNaN(dt) ? '' : WEEKDAGEN[dt.getDay()];
+}
+function winkelTag(w) {
+  const m = {'Zemst':'tag-zemst','Korbeek-Lo':'tag-korbeek','Aubel':'tag-aubel','Zemst + Korbeek-Lo':'tag-all','Zemst + Korbeek-Lo + Aubel':'tag-all'};
+  return '<span class="item-tag '+(m[w]||'tag-all')+'">'+w+'</span>';
+}
+
+// ── EVENTS ──
+function renderEvents() {
+  const el = document.getElementById('events-list');
+  const cnt = document.getElementById('events-count');
+  if (cnt) cnt.textContent = eventsData.length + ' events';
+  if (!eventsData.length) { el.innerHTML='<div class="empty-state"><i class="ti ti-star"></i>Nog geen events.</div>'; return; }
+  const sorted = [...eventsData].sort((a,b)=>(a.datum_van||'9999').localeCompare(b.datum_van||'9999'));
+  el.innerHTML = sorted.map(ev => {
+    let datumTxt = '';
+    if (ev.datum_van && ev.datum_tot && ev.datum_van!==ev.datum_tot) {
+      datumTxt = '<span class="date-chip"><i class="ti ti-calendar-event" style="font-size:9px"></i> '+fmtDate(ev.datum_van)+' → '+fmtDate(ev.datum_tot)+'</span>';
+    } else if (ev.datum_van) {
+      datumTxt = '<span class="date-chip"><i class="ti ti-calendar-event" style="font-size:9px"></i> '+fmtDate(ev.datum_van)+'</span>';
+    }
+    return '<div class="item-card">'
+      + '<div class="item-card-head">'
+      + '<div class="item-card-title">'+ev.titel+'</div>'
+      + '<div class="item-actions">'
+      + '<button class="btn btn-secondary btn-xs" onclick="openEventForm('+ev.id+')"><i class="ti ti-edit"></i></button>'
+      + '<button class="btn btn-danger btn-xs" onclick="deleteEvent('+ev.id+')" title="Verwijderen"><i class="ti ti-trash"></i></button>'
+      + '</div></div>'
+      + '<div class="item-card-meta">'+winkelTag(ev.winkel||'')+(datumTxt?'<div style="margin-top:5px;">'+datumTxt+'</div>':'')+'</div>'
+      + (ev.extra?'<div class="extra-field">'+ev.extra+'</div>':'')
+      + '</div>';
+  }).join('');
+}
+
+function openEventForm(id) {
+  editingEventId = id;
+  const ev = id ? eventsData.find(e=>e.id===id) : null;
+  document.getElementById('event-form-title').textContent = id ? 'Event bewerken' : 'Nieuw event';
+  document.getElementById('ev-titel').value = ev?.titel||'';
+  document.getElementById('ev-winkel').value = ev?.winkel||'Zemst';
+  document.getElementById('ev-datum-van').value = ev?.datum_van||'';
+  document.getElementById('ev-datum-tot').value = ev?.datum_tot||'';
+  document.getElementById('ev-extra').value = ev?.extra||'';
+  document.getElementById('event-bg').classList.add('open');
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function closeEventForm() { document.getElementById('event-bg').classList.remove('open'); editingEventId=null; }
+
+async function saveEvent() {
+  const titel = document.getElementById('ev-titel').value.trim();
+  if (!titel) { document.getElementById('ev-titel').focus(); return; }
+  const data = {titel, winkel:document.getElementById('ev-winkel').value, datum_van:document.getElementById('ev-datum-van').value||null, datum_tot:document.getElementById('ev-datum-tot').value||null, extra:document.getElementById('ev-extra').value.trim()||null};
+  try {
+    syncStatus('load','Opslaan...');
+    if (editingEventId) {
+      await sb('events?id=eq.'+editingEventId, {method:'PATCH', body:JSON.stringify(data), prefer:'return=minimal'});
+      const i = eventsData.findIndex(e=>e.id===editingEventId);
+      if (i>-1) eventsData[i] = {...eventsData[i],...data};
+    } else {
+      const res = await sb('events', {method:'POST', body:JSON.stringify(data)});
+      eventsData.push(res[0]||{...data,id:Date.now()});
+    }
+    syncStatus('ok','Opgeslagen'); toast('Event opgeslagen!','success'); closeEventForm(); renderEvents();
+  } catch(e) { syncStatus('err','Fout'); toast('Fout bij opslaan','error'); console.error(e); }
+}
+
+async function deleteEvent(id) {
+  if (!confirm('Event verwijderen?')) return;
+  try {
+    await sb('events?id=eq.'+id, {method:'DELETE', prefer:''});
+    eventsData = eventsData.filter(e=>e.id!==id); renderEvents();
+    syncStatus('ok','Verwijderd'); toast('Verwijderd','success');
+  } catch(e) { toast('Fout bij verwijderen','error'); }
+}
+
+// ── NIEUWSBRIEF ──
+function renderNb() {
+  const el = document.getElementById('nb-list');
+  const cnt = document.getElementById('nb-count');
+  if (cnt) cnt.textContent = nbData.length + ' nieuwsbrieven';
+  if (!nbData.length) { el.innerHTML='<div class="empty-state"><i class="ti ti-mail"></i>Nog geen nieuwsbrieven.</div>'; return; }
+  const sorted = [...nbData].sort((a,b)=>(a.datum||'9999').localeCompare(b.datum||'9999'));
+  el.innerHTML = sorted.map(nb =>
+    '<div class="item-card">'
+    + '<div class="item-card-head">'
+    + '<div class="item-card-title">'+nb.onderwerp+'</div>'
+    + '<div class="item-actions">'
+    + '<button class="btn btn-secondary btn-xs" onclick="openNbForm('+nb.id+')"><i class="ti ti-edit"></i></button>'
+    + '<button class="btn btn-danger btn-xs" onclick="deleteNb('+nb.id+')"><i class="ti ti-trash"></i></button>'
+    + '</div></div>'
+    + '<div class="item-card-meta">'+winkelTag(nb.winkel||'')+(nb.datum?'<span style="margin-left:6px;"><i class="ti ti-send" style="font-size:10px"></i> Verzenden: '+fmtDate(nb.datum)+'</span>':'')+'</div>'
+    + (nb.extra?'<div class="extra-field">'+nb.extra+'</div>':'')
+    + '</div>'
+  ).join('');
+}
+
+function openNbForm(id) {
+  editingNbId = id;
+  const nb = id ? nbData.find(n=>n.id===id) : null;
+  document.getElementById('nb-form-title').textContent = id ? 'Nieuwsbrief bewerken' : 'Nieuwe nieuwsbrief';
+  document.getElementById('nb-onderwerp').value = nb?.onderwerp||'';
+  document.getElementById('nb-datum').value = nb?.datum||'';
+  document.getElementById('nb-winkel').value = nb?.winkel||'Zemst';
+  document.getElementById('nb-extra').value = nb?.extra||'';
+  document.getElementById('nb-bg').classList.add('open');
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function closeNbForm() { document.getElementById('nb-bg').classList.remove('open'); editingNbId=null; }
+
+async function saveNb() {
+  const onderwerp = document.getElementById('nb-onderwerp').value.trim();
+  if (!onderwerp) { document.getElementById('nb-onderwerp').focus(); return; }
+  const data = {onderwerp, datum:document.getElementById('nb-datum').value||null, winkel:document.getElementById('nb-winkel').value, extra:document.getElementById('nb-extra').value.trim()||null};
+  try {
+    syncStatus('load','Opslaan...');
+    if (editingNbId) {
+      await sb('nieuwsbrieven?id=eq.'+editingNbId, {method:'PATCH', body:JSON.stringify(data), prefer:'return=minimal'});
+      const i = nbData.findIndex(n=>n.id===editingNbId);
+      if (i>-1) nbData[i] = {...nbData[i],...data};
+    } else {
+      const res = await sb('nieuwsbrieven', {method:'POST', body:JSON.stringify(data)});
+      nbData.push(res[0]||{...data,id:Date.now()});
+    }
+    syncStatus('ok','Opgeslagen'); toast('Opgeslagen!','success'); closeNbForm(); renderNb();
+  } catch(e) { syncStatus('err','Fout'); toast('Fout bij opslaan','error'); }
+}
+
+async function deleteNb(id) {
+  if (!confirm('Nieuwsbrief verwijderen?')) return;
+  try {
+    await sb('nieuwsbrieven?id=eq.'+id, {method:'DELETE', prefer:''});
+    nbData = nbData.filter(n=>n.id!==id); renderNb();
+    syncStatus('ok','Verwijderd'); toast('Verwijderd','success');
+  } catch(e) { toast('Fout bij verwijderen','error'); }
+}
+
+// ── OPENINGSUREN ──
+function renderUren() {
+  const el = document.getElementById('uren-list');
+  const cnt = document.getElementById('uren-count');
+  if (cnt) cnt.textContent = urenData.length + ' items';
+  if (!urenData.length) { el.innerHTML='<div class="empty-state"><i class="ti ti-clock"></i>Nog geen speciale openingsuren.</div>'; return; }
+  const sorted = [...urenData].sort((a,b)=>(a.datum||'9999').localeCompare(b.datum||'9999'));
+  el.innerHTML = sorted.map(ur => {
+    const statusCls = ur.status==='gesloten'?'status-closed':ur.status==='open'?'status-open':'status-special';
+    const statusTxt = ur.status==='gesloten'?'🔴 Gesloten':ur.status==='open'?'🟢 Open':(ur.van&&ur.tot?'🟡 '+ur.van+' – '+ur.tot:'🟡 Aangepaste uren');
+    const dag = ur.dag||(ur.datum?dagVanDatum(ur.datum):'');
+    return '<div class="item-card">'
+      + '<div class="item-card-head">'
+      + '<div class="item-card-title">'+fmtDate(ur.datum)+(dag?' — '+dag:'')+'</div>'
+      + '<div class="item-actions">'
+      + '<button class="btn btn-secondary btn-xs" onclick="openUrenForm('+ur.id+')"><i class="ti ti-edit"></i></button>'
+      + '<button class="btn btn-danger btn-xs" onclick="deleteUren('+ur.id+')"><i class="ti ti-trash"></i></button>'
+      + '</div></div>'
+      + '<div class="item-card-meta">'+winkelTag(ur.winkel||'')+'<span class="'+statusCls+'" style="margin-left:8px;">'+statusTxt+'</span>'+(ur.reden?'<span style="color:#aaa;margin-left:8px;">'+ur.reden+'</span>':'')+'</div>'
+      + (ur.extra?'<div class="extra-field">'+ur.extra+'</div>':'')
+      + '</div>';
+  }).join('');
+}
+
+function openUrenForm(id) {
+  editingUrenId = id;
+  const ur = id ? urenData.find(u=>u.id===id) : null;
+  document.getElementById('uren-form-title').textContent = id ? 'Openingsuur bewerken' : 'Speciale openingsuren';
+  document.getElementById('ur-datum').value = ur?.datum||'';
+  document.getElementById('ur-dag').value = ur?.dag||'';
+  document.getElementById('ur-status').value = ur?.status||'gesloten';
+  document.getElementById('ur-van').value = ur?.van||'';
+  document.getElementById('ur-tot').value = ur?.tot||'';
+  document.getElementById('ur-winkel').value = ur?.winkel||'Zemst';
+  document.getElementById('ur-reden').value = ur?.reden||'';
+  document.getElementById('ur-extra').value = ur?.extra||'';
+  toggleUrenWrap();
+  document.getElementById('uren-bg').classList.add('open');
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function closeUrenForm() { document.getElementById('uren-bg').classList.remove('open'); editingUrenId=null; }
+function toggleUrenWrap() {
+  document.getElementById('ur-uren-wrap').style.display = document.getElementById('ur-status').value==='aangepast' ? 'block' : 'none';
+}
+
+async function saveUren() {
+  const datum = document.getElementById('ur-datum').value;
+  if (!datum) { document.getElementById('ur-datum').focus(); return; }
+  const dag = document.getElementById('ur-dag').value || dagVanDatum(datum);
+  const data = {datum, dag, status:document.getElementById('ur-status').value, van:document.getElementById('ur-van').value, tot:document.getElementById('ur-tot').value, winkel:document.getElementById('ur-winkel').value, reden:document.getElementById('ur-reden').value.trim(), extra:document.getElementById('ur-extra').value.trim()};
+  try {
+    syncStatus('load','Opslaan...');
+    if (editingUrenId) {
+      await sb('openingsuren?id=eq.'+editingUrenId, {method:'PATCH', body:JSON.stringify(data), prefer:'return=minimal'});
+      const i = urenData.findIndex(u=>u.id===editingUrenId);
+      if (i>-1) urenData[i] = {...urenData[i],...data};
+    } else {
+      const res = await sb('openingsuren', {method:'POST', body:JSON.stringify(data)});
+      urenData.push(res[0]||{...data,id:Date.now()});
+    }
+    syncStatus('ok','Opgeslagen'); toast('Opgeslagen!','success'); closeUrenForm(); renderUren();
+  } catch(e) { syncStatus('err','Fout'); toast('Fout bij opslaan','error'); console.error(e); }
+}
+
+async function deleteUren(id) {
+  if (!confirm('Openingsuur verwijderen?')) return;
+  try {
+    await sb('openingsuren?id=eq.'+id, {method:'DELETE', prefer:''});
+    urenData = urenData.filter(u=>u.id!==id); renderUren();
+    syncStatus('ok','Verwijderd'); toast('Verwijderd','success');
+  } catch(e) { toast('Fout bij verwijderen','error'); }
+}
+
+// ── SCHERMEN ──
+function renderSchermen() {
+  const el = document.getElementById('schermen-list');
+  const cnt = document.getElementById('schermen-count');
+  if (cnt) cnt.textContent = schermenData.length + ' items';
+  if (!schermenData.length) { el.innerHTML='<div class="empty-state"><i class="ti ti-device-tv"></i>Nog geen items.</div>'; return; }
+  const sorted = [...schermenData].sort((a,b)=>(a.datum||'9999').localeCompare(b.datum||'9999'));
+  el.innerHTML = sorted.map(sc =>
+    '<div class="item-card">'
+    + '<div class="item-card-head">'
+    + '<div class="item-card-title">'+sc.onderwerp+'</div>'
+    + '<div class="item-actions">'
+    + '<button class="btn btn-secondary btn-xs" onclick="openSchermForm('+sc.id+')"><i class="ti ti-edit"></i></button>'
+    + '<button class="btn btn-danger btn-xs" onclick="deleteScherm('+sc.id+')"><i class="ti ti-trash"></i></button>'
+    + '</div></div>'
+    + '<div class="item-card-meta">'+winkelTag(sc.winkel||'')+(sc.datum?'<span style="margin-left:6px;"><i class="ti ti-calendar" style="font-size:10px"></i> '+fmtDate(sc.datum)+'</span>':'')+'</div>'
+    + (sc.extra?'<div class="extra-field">'+sc.extra+'</div>':'')
+    + '</div>'
+  ).join('');
+}
+
+function openSchermForm(id) {
+  editingSchermId = id;
+  const sc = id ? schermenData.find(s=>s.id===id) : null;
+  document.getElementById('scherm-form-title').textContent = id ? 'Item bewerken' : 'Nieuw schermitem';
+  document.getElementById('sc-onderwerp').value = sc?.onderwerp||'';
+  document.getElementById('sc-winkel').value = sc?.winkel||'Zemst';
+  document.getElementById('sc-datum').value = sc?.datum||'';
+  document.getElementById('sc-extra').value = sc?.extra||'';
+  document.getElementById('scherm-bg').classList.add('open');
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function closeSchermForm() { document.getElementById('scherm-bg').classList.remove('open'); editingSchermId=null; }
+
+async function saveScherm() {
+  const onderwerp = document.getElementById('sc-onderwerp').value.trim();
+  if (!onderwerp) { document.getElementById('sc-onderwerp').focus(); return; }
+  const data = {onderwerp, winkel:document.getElementById('sc-winkel').value, datum:document.getElementById('sc-datum').value||null, extra:document.getElementById('sc-extra').value.trim()||null};
+  try {
+    syncStatus('load','Opslaan...');
+    if (editingSchermId) {
+      await sb('schermen?id=eq.'+editingSchermId, {method:'PATCH', body:JSON.stringify(data), prefer:'return=minimal'});
+      const i = schermenData.findIndex(s=>s.id===editingSchermId);
+      if (i>-1) schermenData[i] = {...schermenData[i],...data};
+    } else {
+      const res = await sb('schermen', {method:'POST', body:JSON.stringify(data)});
+      schermenData.push(res[0]||{...data,id:Date.now()});
+    }
+    syncStatus('ok','Opgeslagen'); toast('Opgeslagen!','success'); closeSchermForm(); renderSchermen();
+  } catch(e) { syncStatus('err','Fout'); toast('Fout bij opslaan','error'); console.error(e); }
+}
+
+async function deleteScherm(id) {
+  if (!confirm('Item verwijderen?')) return;
+  try {
+    await sb('schermen?id=eq.'+id, {method:'DELETE', prefer:''});
+    schermenData = schermenData.filter(s=>s.id!==id); renderSchermen();
+    syncStatus('ok','Verwijderd'); toast('Verwijderd','success');
+  } catch(e) { toast('Fout bij verwijderen','error'); }
+}
+
+function downloadHTML() {
+  const blob = new Blob([document.documentElement.outerHTML], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'Carmi_Nieuwsbrief_Events_v2.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+loadAll();
+// ════════════════════════════════════════════════════════════
+// TO-DO MODULE
+// ════════════════════════════════════════════════════════════
+const TODO_PERSONS = ['charlotte','magali','sofie'];
+const TODO_MN = ['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+const TODO_DN = ['Ma','Di','Wo','Do','Vr','Za','Zo'];
+
+let todoData = { charlotte:{cal:[],items:[],deadlines:[]}, magali:{cal:[],items:[],deadlines:[]}, sofie:{cal:[],items:[],deadlines:[]} };
+let todoCalState = { charlotte:{year:new Date().getFullYear(),month:new Date().getMonth()}, magali:{year:new Date().getFullYear(),month:new Date().getMonth()}, sofie:{year:new Date().getFullYear(),month:new Date().getMonth()} };
+let _todoModalMode=null, _todoModalPerson=null, _todoModalId=null, _todoModalDate=null;
+let _todoTmpSeq=0;
+function makeTodoTmpId() { return -(Date.now()*1000 + (_todoTmpSeq++)); } // tijdelijk uniek id tot Supabase het echte id teruggeeft
+
+// ── LADEN UIT SUPABASE ──
+async function loadTodo() {
+  try {
+    const rows = await sb('todo_items?order=id.asc');
+    todoData = { charlotte:{cal:[],items:[],deadlines:[]}, magali:{cal:[],items:[],deadlines:[]}, sofie:{cal:[],items:[],deadlines:[]} };
+    rows.forEach(r => {
+      const p = r.persoon;
+      if (!todoData[p]) return;
+      if (r.type==='cal') todoData[p].cal.push(r);
+      else if (r.type==='item') todoData[p].items.push(r);
+      else if (r.type==='deadline') todoData[p].deadlines.push(r);
+    });
+    renderAllTodo();
+    // Zorg dat kalenders ook renderen als todo-tab al actief is
+    TODO_PERSONS.forEach(p => renderTodoCal(p));
+  } catch(e) {
+    console.warn('todo laden mislukt:', e.message);
+  }
+}
+
+async function saveTodoItem(item) {
+  try {
+    if (item.id && typeof item.id === 'number' && item.id > 0) {
+      await sb(`todo_items?id=eq.${item.id}`, {method:'PATCH', body:JSON.stringify(item), prefer:'return=minimal'});
+    } else {
+      const { id, ...payload } = item; // tijdelijk id niet meesturen naar Supabase
+      const res = await sb('todo_items', {method:'POST', body:JSON.stringify(payload)});
+      if (res[0]) {
+        item.id = res[0].id;
+        // Herteken zodat checkbox/bewerk/verwijder-knoppen het echte id gebruiken i.p.v. het tijdelijke
+        if (item.type==='item') renderTodoList(item.persoon);
+        else if (item.type==='deadline') renderTodoDeadlines(item.persoon);
+        else renderTodoCal(item.persoon);
+      }
+    }
+  } catch(e) { console.error('todo opslaan fout:', e.message); }
+}
+
+async function deleteTodoItem(id) {
+  try { await sb(`todo_items?id=eq.${id}`, {method:'DELETE', prefer:''}); }
+  catch(e) { console.error('todo verwijder fout:', e.message); }
+}
+
+// ── RENDER ──
+function renderAllTodo() {
+  TODO_PERSONS.forEach(p => {
+    renderTodoCal(p);
+    renderTodoList(p);
+    renderTodoDeadlines(p);
+  });
+}
+
+function renderTodoCal(p) {
+  const {year,month} = todoCalState[p];
+  const el = document.getElementById('todo-cal-'+p);
+  const title = document.getElementById('todo-cal-title-'+p);
+  if (!el||!title) return;
+  title.textContent = TODO_MN[month].charAt(0).toUpperCase()+TODO_MN[month].slice(1) + ' ' + year;
+  const firstDay = (new Date(year,month,1).getDay()+6)%7;
+  const dim = new Date(year,month+1,0).getDate();
+  const today = new Date();
+  const allEntries = todoData[p].cal;
+
+  let html = TODO_DN.map(d=>`<div class="todo-cal-hd">${d}</div>`).join('');
+
+  // Lege vakjes voor eerste dag
+  for (let i=0;i<firstDay;i++) html+=`<div class="todo-cal-day other-month"></div>`;
+
+  for (let day=1;day<=dim;day++) {
+    const key = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const isToday = today.getFullYear()===year && today.getMonth()===month && today.getDate()===day;
+    const dayEntries = allEntries.filter(c=>c.datum===key);
+    const entriesHTML = dayEntries.slice(0,3).map(c=>`
+      <div class="todo-cal-entry${c.done?' done':''}" onclick="event.stopPropagation();openTodoCalForm('${p}','${key}',${c.id})" title="${c.titel}">
+        <i class="ti ${c.done?'ti-circle-check':'ti-circle'}"></i>
+        ${c.titel}
+      </div>`).join('');
+    const moreHTML = dayEntries.length>3 ? `<div style="font-size:9px;color:#aaa;padding:1px 4px;">+${dayEntries.length-3} meer</div>` : '';
+    html += `<div class="todo-cal-day${isToday?' today':''}" onclick="openTodoCalForm('${p}','${key}',null)">
+      <div class="todo-cal-dn">${day}</div>
+      ${entriesHTML}${moreHTML}
+      <button class="todo-cal-add" onclick="event.stopPropagation();openTodoCalForm('${p}','${key}',null)" title="Toevoegen">+</button>
+    </div>`;
+  }
+  el.innerHTML = html;
+}
+
+function renderTodoList(p) {
+  const el = document.getElementById('todo-list-'+p);
+  if (!el) return;
+  const items = todoData[p].items;
+  if (!items.length) { el.innerHTML='<div style="font-size:12px;color:#aaa;text-align:center;padding:12px;">Geen to-dos</div>'; return; }
+  el.innerHTML = items.map(it=>`
+    <div class="todo-item${it.done?' done':''}">
+      <input type="checkbox" class="todo-check" ${it.done?'checked':''} onchange="toggleTodoDone('${p}','item',${it.id},this.checked)">
+      <div class="todo-item-body">
+        <div class="todo-item-text">${it.titel}</div>
+        ${it.omschrijving?`<div class="todo-item-desc">${it.omschrijving}</div>`:''}
+      </div>
+      <div class="todo-item-actions">
+        <button class="btn btn-secondary btn-xs" onclick="openTodoItemForm('${p}',${it.id})"><i class="ti ti-edit"></i></button>
+        <button class="btn btn-danger btn-xs" onclick="deleteTodo('${p}','item',${it.id})"><i class="ti ti-trash"></i></button>
+      </div>
+    </div>`).join('');
+}
+
+function renderTodoDeadlines(p) {
+  const el = document.getElementById('todo-deadlines-'+p);
+  if (!el) return;
+  const deadlines = [...todoData[p].deadlines].sort((a,b)=>(a.datum||'9999').localeCompare(b.datum||'9999'));
+  if (!deadlines.length) { el.innerHTML='<div style="font-size:12px;color:#aaa;text-align:center;padding:12px;">Geen deadlines</div>'; return; }
+  const today = new Date().toISOString().split('T')[0];
+  el.innerHTML = deadlines.map(dl=>{
+    const isOverdue = !dl.done && dl.datum && dl.datum < today;
+    const dateStr = dl.datum ? dl.datum.split('-').reverse().join('/') : '';
+    return`<div class="todo-item${dl.done?' done':''}">
+      <input type="checkbox" class="todo-check" ${dl.done?'checked':''} onchange="toggleTodoDone('${p}','deadline',${dl.id},this.checked)">
+      <div class="todo-item-body">
+        <div class="todo-item-text">${dl.titel}</div>
+        ${dl.omschrijving?`<div class="todo-item-desc">${dl.omschrijving}</div>`:''}
+        ${dateStr?`<div class="todo-item-date${isOverdue?' overdue':''}"><i class="ti ti-flag" style="font-size:9px;"></i> ${dateStr}${isOverdue?' — Verlopen':''}</div>`:''}
+      </div>
+      <div class="todo-item-actions">
+        <button class="btn btn-secondary btn-xs" onclick="openTodoDeadlineForm('${p}',${dl.id})"><i class="ti ti-edit"></i></button>
+        <button class="btn btn-danger btn-xs" onclick="deleteTodo('${p}','deadline',${dl.id})"><i class="ti ti-trash"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── NAVIGATIE ──
+function switchTodoPerson(person, el) {
+  document.querySelectorAll('.todo-person-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.todo-person-panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('todo-panel-'+person).classList.add('active');
+}
+
+function todoCalNav(person, dir) {
+  let {year,month} = todoCalState[person];
+  month += dir;
+  if (month > 11) { month=0; year++; }
+  if (month < 0) { month=11; year--; }
+  todoCalState[person] = {year,month};
+  renderTodoCal(person);
+}
+
+// ── TOGGLE DONE ──
+async function toggleTodoDone(person, type, id, done) {
+  const arr = todoData[person][type==='item'?'items':'deadlines'];
+  const item = arr.find(x=>x.id===id);
+  if (!item) return;
+  item.done = done;
+  if (type==='item') renderTodoList(person);
+  else renderTodoDeadlines(person);
+  await saveTodoItem(item);
+}
+
+async function toggleTodoCalDone(person, id) {
+  const item = todoData[person].cal.find(x=>x.id===id);
+  if (!item) return;
+  item.done = !item.done;
+  renderTodoCal(person);
+  await saveTodoItem(item);
+}
+
+// ── VERWIJDEREN ──
+async function deleteTodo(person, type, id) {
+  if (!confirm('Verwijderen?')) return;
+  const key = type==='item'?'items':type==='deadline'?'deadlines':'cal';
+  todoData[person][key] = todoData[person][key].filter(x=>x.id!==id);
+  if (type==='item') renderTodoList(person);
+  else if (type==='deadline') renderTodoDeadlines(person);
+  else renderTodoCal(person);
+  await deleteTodoItem(id);
+}
+
+// ── MODALS ──
+function openTodoCalForm(person, date, id) {
+  _todoModalMode='cal'; _todoModalPerson=person; _todoModalDate=date; _todoModalId=id;
+  const item = id ? todoData[person].cal.find(x=>x.id===id) : null;
+  const useDate = date || (item?.datum) || '';
+  document.getElementById('todo-modal-title').textContent = id?'Kalenderitem bewerken':'Item toevoegen aan kalender';
+  document.getElementById('todo-modal-body').innerHTML = `
+    <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin-bottom:4px;">Titel *</label>
+    <input id="tm-titel" class="form-input" type="text" value="${item?.titel||''}" placeholder="bv. Vergadering, afspraak...">
+    <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin:10px 0 4px;">Datum *</label>
+    <input id="tm-datum" class="form-input" type="date" value="${useDate}">
+    <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin:10px 0 4px;">Omschrijving</label>
+    <textarea id="tm-desc" class="form-input" style="min-height:55px;" placeholder="Extra info...">${item?.omschrijving||''}</textarea>
+    ${id?`<label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;cursor:pointer;">
+      <input type="checkbox" id="tm-done" ${item?.done?'checked':''} style="accent-color:#4CAF50;width:15px;height:15px;"> Afgewerkt
+    </label>`:''}`;
+  openTodoModal();
+}
+
+function openTodoItemForm(person, id) {
+  _todoModalMode='item'; _todoModalPerson=person; _todoModalId=id;
+  const item = id ? todoData[person].items.find(x=>x.id===id) : null;
+  document.getElementById('todo-modal-title').textContent = id?'To-do bewerken':'To-do toevoegen';
+  document.getElementById('todo-modal-body').innerHTML = `
+    <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin-bottom:4px;">Titel *</label>
+    <input id="tm-titel" class="form-input" type="text" value="${item?.titel||''}" placeholder="Wat moet er gedaan worden?">
+    <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin:10px 0 4px;">Omschrijving</label>
+    <textarea id="tm-desc" class="form-input" style="min-height:55px;" placeholder="Extra info...">${item?.omschrijving||''}</textarea>
+    ${id?`<label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;cursor:pointer;">
+      <input type="checkbox" id="tm-done" ${item?.done?'checked':''} style="accent-color:#4CAF50;width:15px;height:15px;"> Afgewerkt
+    </label>`:''}`;
+  openTodoModal();
+}
+
+function openTodoDeadlineForm(person, id) {
+  _todoModalMode='deadline'; _todoModalPerson=person; _todoModalId=id;
+  const item = id ? todoData[person].deadlines.find(x=>x.id===id) : null;
+  document.getElementById('todo-modal-title').textContent = id?'Deadline bewerken':'Deadline toevoegen';
+  document.getElementById('todo-modal-body').innerHTML = `
+    <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin-bottom:4px;">Titel *</label>
+    <input id="tm-titel" class="form-input" type="text" value="${item?.titel||''}" placeholder="bv. Campagne afwerken...">
+    <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin:10px 0 4px;">Deadline datum *</label>
+    <input id="tm-datum" class="form-input" type="date" value="${item?.datum||''}">
+    <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin:10px 0 4px;">Omschrijving</label>
+    <textarea id="tm-desc" class="form-input" style="min-height:55px;" placeholder="Wat moet er precies gedaan zijn?">${item?.omschrijving||''}</textarea>
+    ${id?`<label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;cursor:pointer;">
+      <input type="checkbox" id="tm-done" ${item?.done?'checked':''} style="accent-color:#4CAF50;width:15px;height:15px;"> Afgewerkt
+    </label>`:''}`;
+  openTodoModal();
+}
+
+function openTodoModal() {
+  const bg = document.getElementById('todo-modal-bg');
+  bg.style.display = 'flex';
+  window.scrollTo({top:0,behavior:'instant'});
+  setTimeout(()=>{ const f=bg.querySelector('#tm-titel'); if(f)f.focus(); },50);
+}
+function closeTodoModal() { document.getElementById('todo-modal-bg').style.display='none'; }
+
+async function saveTodoModal() {
+  const titel = document.getElementById('tm-titel')?.value.trim();
+  if (!titel) { document.getElementById('tm-titel')?.focus(); return; }
+  const datum = document.getElementById('tm-datum')?.value || null;
+  const omschrijving = document.getElementById('tm-desc')?.value.trim() || null;
+  const done = document.getElementById('tm-done')?.checked || false;
+  const p = _todoModalPerson;
+  const typeMap = {cal:'cal',item:'items',deadline:'deadlines'};
+  const arrKey = typeMap[_todoModalMode];
+
+  let item;
+  if (_todoModalId) {
+    item = todoData[p][arrKey].find(x=>x.id===_todoModalId);
+    if (item) { item.titel=titel; item.datum=datum; item.omschrijving=omschrijving; item.done=done; }
+  } else {
+    item = { id:makeTodoTmpId(), persoon:p, type:_todoModalMode, titel, datum, omschrijving, done:false };
+    todoData[p][arrKey].push(item);
+  }
+
+  closeTodoModal();
+  if (_todoModalMode==='cal') renderTodoCal(p);
+  else if (_todoModalMode==='item') renderTodoList(p);
+  else renderTodoDeadlines(p);
+
+  syncStatus('load');
+  await saveTodoItem(item);
+  syncStatus('ok');
+}
+
+function syncStatus(state) {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  if (state==='load') { el.className='sync-badge sync-load'; el.textContent='● Opslaan...'; }
+  else if (state==='ok') { el.className='sync-badge sync-ok'; el.textContent='● Gesynchroniseerd'; }
+  else { el.className='sync-badge sync-err'; el.textContent='● Fout'; }
+}
+// ── EINDE TO-DO ──
+</script>
+
+
+</body></html>
