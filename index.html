@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-title" content="Carmi Events">
 <meta name="theme-color" content="#0f1356">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&amp;family=DM+Serif+Display:ital@0;1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&amp;family=DM+Serif+Display:ital@0;1&amp;display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#12175e;--cream:#f7f3ee;--cream2:#ede8e0;
@@ -16,7 +16,7 @@
   --white:#ffffff;--border:rgba(13,13,13,0.1);--border-med:rgba(13,13,13,0.18);
   --shadow:0 2px 16px rgba(0,0,0,0.07);--shadow-lg:0 8px 40px rgba(0,0,0,0.13);
   --r:10px;--r-sm:6px;--r-pill:99px;
-  --font:'DM Sans',system-ui,sans-serif;--serif:'DM Serif Display',Georgia,serif;
+  --font:'Montserrat',system-ui,sans-serif;--serif:'DM Serif Display',Georgia,serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{min-height:100%;font-family:var(--font);font-size:14px;background:var(--cream);color:var(--ink);}
@@ -57,7 +57,7 @@ html,body{min-height:100%;font-family:var(--font);font-size:14px;background:var(
 .todo-check{width:16px;height:16px;accent-color:#4CAF50;cursor:pointer;flex-shrink:0;margin-top:2px;}
 .todo-item-body{flex:1;min-width:0;}
 .todo-item-text{font-size:12px;font-weight:500;color:var(--ink);}
-.todo-item-desc{font-size:11px;color:#888;margin-top:2px;line-height:1.4;}
+.todo-item-desc{font-size:11px;color:#888;margin-top:2px;line-height:1.4;white-space:pre-wrap;}
 .todo-item-date{font-size:10px;color:var(--pink);font-weight:600;margin-top:3px;}
 .todo-item-date.overdue{color:#e53935;}
 .todo-item-actions{display:flex;gap:3px;flex-shrink:0;}
@@ -86,6 +86,7 @@ html,body{min-height:100%;font-family:var(--font);font-size:14px;background:var(
 .todo-cal-entry{touch-action:none;}
 .todo-cal-day.drag-over{background:var(--pink-pale)!important;border-color:var(--pink)!important;border-width:2px;}
 .todo-drag-ghost{position:fixed;z-index:9999;pointer-events:none;opacity:.85;box-shadow:var(--shadow-lg);border-radius:var(--r-sm);}
+.todo-drag-handle,.todo-cal-entry,.todo-cal-grid,.todo-items{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
 .btn-dl:hover{color:#fff;border-color:rgba(255,255,255,0.3);}
 .btn-refresh{width:100%;padding:9px;background:var(--cobalt);color:#fff;border:none;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .15s;margin-bottom:6px;font-family:var(--font);}
 .btn-refresh:hover{background:var(--cobalt-lt);}
@@ -149,9 +150,17 @@ html,body{min-height:100%;font-family:var(--font);font-size:14px;background:var(
 .modal-bg.open{display:flex;}
 .modal{background:#fff;border-radius:14px;padding:24px;max-width:500px;width:94%;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
 .modal-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
-.modal-title{font-family:var(--serif);font-size:18px;color:var(--ink);}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.modal-title{font-family:var(--serif);font-size:19px;color:var(--ink);}
 .modal-close{cursor:pointer;font-size:20px;color:#bbb;background:none;border:none;padding:2px;}
 .modal-close:hover{color:var(--ink);}
+.modal-body{display:flex;flex-direction:column;}
+.modal-footer{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:20px;}
+.form-input{width:100%;padding:10px 13px;border:1px solid var(--border-med);border-radius:var(--r-sm);font-family:var(--font);font-size:13px;color:var(--ink);background:var(--cream);transition:border-color .15s,box-shadow .15s,background .15s;}
+.form-input:focus{outline:none;border-color:var(--cobalt);background:var(--white);box-shadow:0 0 0 3px rgba(26,44,143,0.1);}
+.form-input::placeholder{color:#aaa;}
+textarea.form-input{resize:vertical;line-height:1.55;font-family:var(--font);}
+select.form-input{cursor:pointer;}
 .fl{font-size:11px;font-weight:600;color:#666;margin-bottom:4px;display:block;text-transform:uppercase;letter-spacing:.04em;}
 .fi{width:100%;padding:8px 10px;border:1px solid var(--border-med);border-radius:var(--r-sm);font-size:12px;background:#fff;color:var(--ink);margin-bottom:10px;font-family:var(--font);outline:none;transition:border-color .15s;}
 .fi:focus{border-color:var(--cobalt);}
@@ -758,6 +767,7 @@ textarea.fi{min-height:70px;resize:vertical;}
     <textarea id="tm-desc" class="form-input" style="min-height:55px;" placeholder="Wat moet er precies gedaan zijn?"></textarea>
     </div>
     <div class="modal-footer">
+      <button class="btn btn-danger" id="todo-modal-delete-btn" style="display:none;margin-right:auto;" onclick="deleteFromTodoModal()"><i class="ti ti-trash"></i> Verwijderen</button>
       <button class="btn btn-secondary" onclick="closeTodoModal()">Annuleren</button>
       <button class="btn btn-primary" onclick="saveTodoModal()">Opslaan</button>
     </div>
@@ -1507,6 +1517,7 @@ function todoCalNav(person, dir) {
 let _todoDragGhost = null;
 function todoDragStart(event, person, kind, id) {
   if (event.pointerType === 'mouse' && event.button !== 0) return;
+  event.preventDefault();
   const el = event.currentTarget.closest('.todo-item, .todo-cal-entry');
   if (!el) return;
   const startX = event.clientX, startY = event.clientY;
@@ -1612,7 +1623,23 @@ function openTodoCalForm(person, date, id) {
   const item = id ? todoData[person].cal.find(x=>x.id===id) : null;
   const useDate = date || (item?.datum) || '';
   document.getElementById('todo-modal-title').textContent = id?'Kalenderitem bewerken':'Item toevoegen aan kalender';
-  document.getElementById('todo-modal-body').innerHTML = `
+
+  let pickerHTML = '';
+  if (!id) {
+    const openTodos = todoData[person].items.filter(i=>!i.datum);
+    const openDeadlines = todoData[person].deadlines.filter(d=>!d.datum);
+    if (openTodos.length || openDeadlines.length) {
+      pickerHTML = `
+    <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin-bottom:4px;">Bestaande to-do of deadline plaatsen op deze dag (optioneel)</label>
+    <select id="tm-existing" class="form-input" style="margin-bottom:12px;" onchange="applyExistingTodoToCal(this.value)">
+      <option value="">— Nieuw kalenderitem —</option>
+      ${openTodos.length?`<optgroup label="To-Do's">${openTodos.map(i=>`<option value="item:${i.id}">${i.titel}</option>`).join('')}</optgroup>`:''}
+      ${openDeadlines.length?`<optgroup label="Deadlines">${openDeadlines.map(d=>`<option value="deadline:${d.id}">${d.titel}</option>`).join('')}</optgroup>`:''}
+    </select>`;
+    }
+  }
+
+  document.getElementById('todo-modal-body').innerHTML = pickerHTML + `
     <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin-bottom:4px;">Titel *</label>
     <input id="tm-titel" class="form-input" type="text" value="${item?.titel||''}" placeholder="bv. Vergadering, afspraak...">
     <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin:10px 0 4px;">Datum *</label>
@@ -1622,7 +1649,35 @@ function openTodoCalForm(person, date, id) {
     ${id?`<label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;cursor:pointer;">
       <input type="checkbox" id="tm-done" ${item?.done?'checked':''} style="accent-color:#4CAF50;width:15px;height:15px;"> Afgewerkt
     </label>`:''}`;
+  toggleTodoDeleteBtn(id);
   openTodoModal();
+}
+
+async function applyExistingTodoToCal(value) {
+  if (!value) return;
+  const dateVal = document.getElementById('tm-datum')?.value || _todoModalDate;
+  if (!dateVal) {
+    alert('Kies eerst een datum voor je een bestaand item kiest.');
+    const sel = document.getElementById('tm-existing'); if (sel) sel.value = '';
+    return;
+  }
+  const [kind, idStr] = value.split(':');
+  const id = Number(idStr);
+  const person = _todoModalPerson;
+  closeTodoModal();
+  await moveTodoToDate(person, kind, id, dateVal);
+}
+
+function toggleTodoDeleteBtn(id) {
+  const btn = document.getElementById('todo-modal-delete-btn');
+  if (btn) btn.style.display = id ? '' : 'none';
+}
+
+async function deleteFromTodoModal() {
+  if (!_todoModalId) return;
+  const person = _todoModalPerson, mode = _todoModalMode, id = _todoModalId;
+  closeTodoModal();
+  await deleteTodo(person, mode, id);
 }
 
 function openTodoItemForm(person, id) {
@@ -1639,6 +1694,7 @@ function openTodoItemForm(person, id) {
     ${id?`<label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;cursor:pointer;">
       <input type="checkbox" id="tm-done" ${item?.done?'checked':''} style="accent-color:#4CAF50;width:15px;height:15px;"> Afgewerkt
     </label>`:''}`;
+  toggleTodoDeleteBtn(id);
   openTodoModal();
 }
 
@@ -1656,6 +1712,7 @@ function openTodoDeadlineForm(person, id) {
     ${id?`<label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;cursor:pointer;">
       <input type="checkbox" id="tm-done" ${item?.done?'checked':''} style="accent-color:#4CAF50;width:15px;height:15px;"> Afgewerkt
     </label>`:''}`;
+  toggleTodoDeleteBtn(id);
   openTodoModal();
 }
 
