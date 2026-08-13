@@ -55,6 +55,12 @@ html,body{min-height:100%;font-family:var(--font);font-size:14px;background:var(
 .todo-item.done .todo-item-text{text-decoration:line-through;color:#888;}
 .todo-item.done .todo-item-date{text-decoration:line-through;color:#aaa;}
 .todo-check{width:16px;height:16px;accent-color:#4CAF50;cursor:pointer;flex-shrink:0;margin-top:2px;}
+.todo-status-row{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;}
+.todo-status-btn{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;padding:3px 9px;border-radius:var(--r-pill);border:1px solid var(--border-med);background:var(--white);color:#999;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:var(--font);}
+.todo-status-btn:hover{border-color:var(--ink);color:var(--ink);}
+.todo-status-btn.active{background:#8BC34A;border-color:#8BC34A;color:#fff;}
+.todo-status-btn.full.active{background:#2e7d32;border-color:#2e7d32;}
+.todo-item.opgemaakt:not(.done){border-left:3px solid #8BC34A;}
 .todo-item-body{flex:1;min-width:0;}
 .todo-item-text{font-size:12px;font-weight:500;color:var(--ink);}
 .todo-item-desc{font-size:11px;color:#888;margin-top:2px;line-height:1.4;white-space:pre-wrap;}
@@ -77,6 +83,7 @@ html,body{min-height:100%;font-family:var(--font);font-size:14px;background:var(
 .todo-cal-entry{font-size:9px;padding:2px 5px;border-radius:3px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#e8e4ff;color:#2A008B;display:flex;align-items:center;gap:3px;cursor:pointer;}
 .todo-cal-entry:hover{opacity:.8;}
 .todo-cal-entry.done{background:#d4edda;color:#1a5c28;text-decoration:line-through;opacity:.7;}
+.todo-cal-entry.opgemaakt{background:#eef7de;color:#4a7a1e;}
 .todo-cal-entry i{font-size:8px;flex-shrink:0;}
 .todo-cal-add{position:absolute;bottom:3px;right:3px;width:16px;height:16px;border-radius:50%;background:var(--pink);color:#fff;border:none;font-size:11px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;padding:0;}
 .todo-cal-day:hover .todo-cal-add{display:flex;}
@@ -1433,8 +1440,8 @@ function renderTodoCal(p) {
       const openFn = kindOpen[c._kind];
       const openArgs = c._kind==='cal' ? `'${p}','${key}',${c.id}` : `'${p}',${c.id}`;
       return `
-      <div class="todo-cal-entry${c.done?' done':''}" onpointerdown="todoDragStart(event,'${p}','${c._kind}',${c.id})" onclick="event.stopPropagation();${openFn}(${openArgs})" title="${c.titel}">
-        <i class="ti ${c.done?'ti-circle-check':kindIcon[c._kind]}"></i>
+      <div class="todo-cal-entry${c.done?' done':''}${c.opgemaakt&&!c.done?' opgemaakt':''}" onpointerdown="todoDragStart(event,'${p}','${c._kind}',${c.id})" onclick="event.stopPropagation();${openFn}(${openArgs})" title="${c.titel}">
+        <i class="ti ${c.done?'ti-circle-check':c.opgemaakt?'ti-progress-check':kindIcon[c._kind]}"></i>
         ${c.titel}
       </div>`;
     }).join('');
@@ -1454,13 +1461,16 @@ function renderTodoList(p) {
   const items = todoData[p].items;
   if (!items.length) { el.innerHTML='<div style="font-size:12px;color:#aaa;text-align:center;padding:12px;">Geen to-dos</div>'; return; }
   el.innerHTML = items.map(it=>`
-    <div class="todo-item${it.done?' done':''}">
+    <div class="todo-item${it.done?' done':''}${it.opgemaakt?' opgemaakt':''}">
       <span class="todo-drag-handle" onpointerdown="todoDragStart(event,'${p}','item',${it.id})" title="Sleep naar kalender"><i class="ti ti-grip-vertical"></i></span>
-      <input type="checkbox" class="todo-check" ${it.done?'checked':''} onchange="toggleTodoDone('${p}','item',${it.id},this.checked)">
       <div class="todo-item-body">
         <div class="todo-item-text">${it.titel}</div>
         ${it.omschrijving?`<div class="todo-item-desc">${it.omschrijving}</div>`:''}
         ${it.datum?`<div class="todo-item-date"><i class="ti ti-calendar" style="font-size:9px;"></i> ${it.datum.split('-').reverse().join('/')}</div>`:''}
+        <div class="todo-status-row">
+          <button class="todo-status-btn${it.opgemaakt?' active':''}" onclick="toggleTodoStatus('${p}','item',${it.id},'opgemaakt',${!it.opgemaakt})">OK</button>
+          <button class="todo-status-btn full${it.done?' active':''}" onclick="toggleTodoStatus('${p}','item',${it.id},'done',${!it.done})">Volledig afgewerkt</button>
+        </div>
       </div>
       <div class="todo-item-actions">
         <button class="btn btn-secondary btn-xs" onclick="openTodoItemForm('${p}',${it.id})"><i class="ti ti-edit"></i></button>
@@ -1478,13 +1488,16 @@ function renderTodoDeadlines(p) {
   el.innerHTML = deadlines.map(dl=>{
     const isOverdue = !dl.done && dl.datum && dl.datum < today;
     const dateStr = dl.datum ? dl.datum.split('-').reverse().join('/') : '';
-    return`<div class="todo-item${dl.done?' done':''}">
+    return`<div class="todo-item${dl.done?' done':''}${dl.opgemaakt?' opgemaakt':''}">
       <span class="todo-drag-handle" onpointerdown="todoDragStart(event,'${p}','deadline',${dl.id})" title="Sleep naar kalender"><i class="ti ti-grip-vertical"></i></span>
-      <input type="checkbox" class="todo-check" ${dl.done?'checked':''} onchange="toggleTodoDone('${p}','deadline',${dl.id},this.checked)">
       <div class="todo-item-body">
         <div class="todo-item-text">${dl.titel}</div>
         ${dl.omschrijving?`<div class="todo-item-desc">${dl.omschrijving}</div>`:''}
         ${dateStr?`<div class="todo-item-date${isOverdue?' overdue':''}"><i class="ti ti-flag" style="font-size:9px;"></i> ${dateStr}${isOverdue?' — Verlopen':''}</div>`:''}
+        <div class="todo-status-row">
+          <button class="todo-status-btn${dl.opgemaakt?' active':''}" onclick="toggleTodoStatus('${p}','deadline',${dl.id},'opgemaakt',${!dl.opgemaakt})">OK</button>
+          <button class="todo-status-btn full${dl.done?' active':''}" onclick="toggleTodoStatus('${p}','deadline',${dl.id},'done',${!dl.done})">Volledig afgewerkt</button>
+        </div>
       </div>
       <div class="todo-item-actions">
         <button class="btn btn-secondary btn-xs" onclick="openTodoDeadlineForm('${p}',${dl.id})"><i class="ti ti-edit"></i></button>
@@ -1588,14 +1601,17 @@ async function moveTodoToDate(person, kind, id, dateKey) {
 // ── EINDE SLEPEN ──
 
 // ── TOGGLE DONE ──
-async function toggleTodoDone(person, type, id, done) {
+async function toggleTodoStatus(person, type, id, field, value) {
   const arr = todoData[person][type==='item'?'items':'deadlines'];
   const item = arr.find(x=>x.id===id);
   if (!item) return;
-  item.done = done;
+  item[field] = value;
   if (type==='item') renderTodoList(person);
   else renderTodoDeadlines(person);
+  renderTodoCal(person);
+  syncStatus('load');
   await saveTodoItem(item);
+  syncStatus('ok');
 }
 
 async function toggleTodoCalDone(person, id) {
@@ -1691,8 +1707,11 @@ function openTodoItemForm(person, id) {
     <textarea id="tm-desc" class="form-input" style="min-height:55px;" placeholder="Extra info...">${item?.omschrijving||''}</textarea>
     <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin:10px 0 4px;">Datum in kalender (optioneel)</label>
     <input id="tm-datum" class="form-input" type="date" value="${item?.datum||''}">
-    ${id?`<label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;cursor:pointer;">
-      <input type="checkbox" id="tm-done" ${item?.done?'checked':''} style="accent-color:#4CAF50;width:15px;height:15px;"> Afgewerkt
+    ${id?`<label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12px;cursor:pointer;">
+      <input type="checkbox" id="tm-opgemaakt" ${item?.opgemaakt?'checked':''} style="accent-color:#8BC34A;width:15px;height:15px;"> OK (opgemaakt)
+    </label>
+    <label style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px;cursor:pointer;">
+      <input type="checkbox" id="tm-done" ${item?.done?'checked':''} style="accent-color:#2e7d32;width:15px;height:15px;"> Volledig afgewerkt
     </label>`:''}`;
   toggleTodoDeleteBtn(id);
   openTodoModal();
@@ -1709,8 +1728,11 @@ function openTodoDeadlineForm(person, id) {
     <input id="tm-datum" class="form-input" type="date" value="${item?.datum||''}">
     <label style="font-size:11px;font-weight:600;color:#aaa;display:block;margin:10px 0 4px;">Omschrijving</label>
     <textarea id="tm-desc" class="form-input" style="min-height:55px;" placeholder="Wat moet er precies gedaan zijn?">${item?.omschrijving||''}</textarea>
-    ${id?`<label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;cursor:pointer;">
-      <input type="checkbox" id="tm-done" ${item?.done?'checked':''} style="accent-color:#4CAF50;width:15px;height:15px;"> Afgewerkt
+    ${id?`<label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12px;cursor:pointer;">
+      <input type="checkbox" id="tm-opgemaakt" ${item?.opgemaakt?'checked':''} style="accent-color:#8BC34A;width:15px;height:15px;"> OK (opgemaakt)
+    </label>
+    <label style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px;cursor:pointer;">
+      <input type="checkbox" id="tm-done" ${item?.done?'checked':''} style="accent-color:#2e7d32;width:15px;height:15px;"> Volledig afgewerkt
     </label>`:''}`;
   toggleTodoDeleteBtn(id);
   openTodoModal();
@@ -1730,6 +1752,7 @@ async function saveTodoModal() {
   const datum = document.getElementById('tm-datum')?.value || null;
   const omschrijving = document.getElementById('tm-desc')?.value.trim() || null;
   const done = document.getElementById('tm-done')?.checked || false;
+  const opgemaaktEl = document.getElementById('tm-opgemaakt');
   const p = _todoModalPerson;
   const typeMap = {cal:'cal',item:'items',deadline:'deadlines'};
   const arrKey = typeMap[_todoModalMode];
@@ -1737,9 +1760,12 @@ async function saveTodoModal() {
   let item;
   if (_todoModalId) {
     item = todoData[p][arrKey].find(x=>x.id===_todoModalId);
-    if (item) { item.titel=titel; item.datum=datum; item.omschrijving=omschrijving; item.done=done; }
+    if (item) {
+      item.titel=titel; item.datum=datum; item.omschrijving=omschrijving; item.done=done;
+      if (opgemaaktEl) item.opgemaakt = opgemaaktEl.checked;
+    }
   } else {
-    item = { id:makeTodoTmpId(), persoon:p, type:_todoModalMode, titel, datum, omschrijving, done:false };
+    item = { id:makeTodoTmpId(), persoon:p, type:_todoModalMode, titel, datum, omschrijving, done:false, opgemaakt:false };
     todoData[p][arrKey].push(item);
   }
 
