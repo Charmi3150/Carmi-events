@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-title" content="Carmi Events">
 <meta name="theme-color" content="#0f1356">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&amp;family=DM+Serif+Display:ital@0;1&amp;family=Baloo+2:wght@600;700;800&amp;family=Caveat:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;500;600;700;800;900&amp;family=Caveat:wght@500;600;700&amp;display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#12175e;--cream:#f7f3ee;--cream2:#ede8e0;
@@ -16,8 +16,8 @@
   --white:#ffffff;--border:rgba(13,13,13,0.1);--border-med:rgba(13,13,13,0.18);
   --shadow:0 2px 16px rgba(0,0,0,0.07);--shadow-lg:0 8px 40px rgba(0,0,0,0.13);
   --r:10px;--r-sm:6px;--r-pill:99px;
-  --font:'Montserrat',system-ui,sans-serif;--serif:'DM Serif Display',Georgia,serif;
-  --heavy:'Baloo 2',system-ui,sans-serif;--script:'Caveat',cursive;
+  --font:'League Spartan',system-ui,sans-serif;--serif:'League Spartan',system-ui,sans-serif;
+  --heavy:'League Spartan',system-ui,sans-serif;--script:'Caveat',cursive;
   --icon-bg:#e3e8fb;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -28,7 +28,7 @@ html,body{min-height:100%;font-family:var(--font);font-size:14px;background:var(
 .app-shell{display:flex;min-height:100vh;}
 .sidebar{width:220px;flex-shrink:0;background:var(--cobalt-dk);display:flex;flex-direction:column;padding:0;position:sticky;top:0;height:100vh;overflow-y:auto;}
 .sidebar-logo{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,0.1);}
-.sidebar-logo .brand{font-family:var(--serif);font-size:22px;color:#fff;line-height:1;}
+.sidebar-logo .brand{font-family:var(--serif);font-weight:800;font-size:22px;color:#fff;line-height:1;}
 .sidebar-logo .sub{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.12em;margin-top:4px;}
 .sync-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:500;padding:3px 8px;border-radius:var(--r-pill);margin-top:10px;}
 .sync-ok{background:rgba(60,180,80,0.18);color:#5dcc78;}
@@ -103,7 +103,7 @@ html,body{min-height:100%;font-family:var(--font);font-size:14px;background:var(
 /* ── MAIN ── */
 .main-content{flex:1;min-width:0;}
 .page-header{padding:28px 32px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--white);flex-wrap:wrap;}
-.page-title{font-family:var(--serif);font-size:26px;color:var(--ink);line-height:1;}
+.page-title{font-family:var(--serif);font-weight:700;font-size:26px;color:var(--ink);line-height:1;}
 .page-body{padding:24px 32px;}
 .section{display:none;}.section.active{display:block;}
 
@@ -160,7 +160,7 @@ html,body{min-height:100%;font-family:var(--font);font-size:14px;background:var(
 .modal{background:#fff;border-radius:14px;padding:24px;max-width:500px;width:94%;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
 .modal-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
-.modal-title{font-family:var(--serif);font-size:19px;color:var(--ink);}
+.modal-title{font-family:var(--serif);font-weight:700;font-size:19px;color:var(--ink);}
 .modal-close{cursor:pointer;font-size:20px;color:#bbb;background:none;border:none;padding:2px;}
 .modal-close:hover{color:var(--ink);}
 .modal-body{display:flex;flex-direction:column;}
@@ -179,17 +179,10 @@ textarea.fi{min-height:70px;resize:vertical;}
 .sect-label{font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;margin-top:12px;display:block;}
 
 /* ── MOBILE ── */
-.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--cobalt-dk);border-top:1px solid rgba(255,255,255,0.1);z-index:500;padding:0 4px;padding-bottom:max(8px,env(safe-area-inset-bottom));}
-.mobile-nav-row{display:flex;justify-content:space-around;}
-.mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px 2px;cursor:pointer;color:rgba(255,255,255,0.45);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;flex:1;text-align:center;border:none;background:none;font-family:var(--font);}
-.mobile-nav-item.active{color:#fff;}
-.mobile-nav-item i{font-size:20px;display:block;}
 
 /* ── HOMESCHERM (Editor Tools-stijl) ── */
 .home-hero{background:linear-gradient(160deg,var(--cobalt-lt) 0%,var(--cobalt) 55%,var(--cobalt-dk) 100%);border-radius:26px;padding:34px 26px 30px;color:#fff;position:relative;overflow:hidden;margin-bottom:30px;}
 .home-hero::before{content:'';position:absolute;top:-50px;right:-50px;width:190px;height:190px;border-radius:50%;background:rgba(255,255,255,0.07);}
-.home-badge{position:absolute;top:22px;right:22px;width:84px;height:84px;z-index:2;}
-.home-badge svg{width:100%;height:100%;}
 .home-hero-title{font-family:var(--heavy);font-weight:800;text-transform:uppercase;font-size:42px;line-height:0.95;letter-spacing:0;margin-bottom:12px;position:relative;z-index:1;max-width:72%;}
 .home-hero-tag{font-family:var(--script);font-size:23px;line-height:1.25;color:#fff;margin-bottom:22px;position:relative;z-index:1;font-weight:600;}
 .home-stats{display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:1;}
@@ -207,7 +200,16 @@ textarea.fi{min-height:70px;resize:vertical;}
 .tool-card-title{font-family:var(--heavy);text-transform:uppercase;font-size:15px;letter-spacing:-0.01em;color:var(--ink);}
 .tool-card-desc{font-size:12px;color:#888;margin-top:3px;}
 .tool-card-arrow{width:34px;height:34px;border-radius:50%;background:var(--cobalt-dk);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;transition:all .15s;}
-.tool-card:hover .tool-card-arrow{background:var(--pink);}
+.tool-card:hover .tool-card-arrow{background:var(--cobalt);}
+
+/* ── ICONEN (inline SVG, geen lettertype-afhankelijkheid) ── */
+.ico{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block;flex-shrink:0;}
+.nav-item .ico{width:17px;height:17px;}
+.tool-card-icon .ico{width:21px;height:21px;}
+.tool-card-arrow .ico{width:17px;height:17px;}
+.btn-back{width:36px;height:36px;border-radius:50%;background:var(--cream2);border:1.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;color:var(--ink);cursor:pointer;flex-shrink:0;transition:all .15s;}
+.btn-back:hover{background:var(--ink);color:#fff;}
+.btn-back .ico{width:18px;height:18px;transform:rotate(180deg);}
 
 /* ── IDEEËNBANK ── */
 .idea-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
@@ -222,8 +224,6 @@ textarea.fi{min-height:70px;resize:vertical;}
 
 @media(max-width:768px){
   .sidebar{display:none;}
-  .mobile-nav{display:block;}
-  .main-content{padding-bottom:80px;}
   .page-header{padding:16px;}
   .page-body{padding:14px 16px;}
   .frow2{grid-template-columns:1fr;}
@@ -242,7 +242,6 @@ textarea.fi{min-height:70px;resize:vertical;}
   .home-hero{padding:24px 18px 26px;}
   .home-hero-title{font-size:32px;max-width:62%;}
   .home-hero-tag{font-size:19px;}
-  .home-badge{width:66px;height:66px;top:16px;right:16px;}
   .home-section-label .h{font-size:20px;}
   .home-section-label .sub{font-size:16px;}
   .idea-grid{grid-template-columns:1fr;}
@@ -250,6 +249,18 @@ textarea.fi{min-height:70px;resize:vertical;}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute;overflow:hidden;" aria-hidden="true">
+<defs>
+<symbol id="ico-home" viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9a1 1 0 0 0 1 1h3v-6h4v6h3a1 1 0 0 0 1-1v-9"/></symbol>
+<symbol id="ico-star" viewBox="0 0 24 24"><path d="M12 3.5 14.5 9.2 20.5 10 16 14.1 17.3 20 12 16.9 6.7 20 8 14.1 3.5 10 9.5 9.2Z"/></symbol>
+<symbol id="ico-mail" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="M4.5 7 12 13 19.5 7"/></symbol>
+<symbol id="ico-bulb" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.45 1 1.2 1 2.1h5c0-.9.4-1.65 1-2.1A6 6 0 0 0 12 3Z"/></symbol>
+<symbol id="ico-checklist" viewBox="0 0 24 24"><rect x="4.5" y="4" width="15" height="17" rx="2"/><path d="M8.5 11.5 10.5 13.5 15 9"/><path d="M8.5 17h7"/></symbol>
+<symbol id="ico-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+<symbol id="ico-tv" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M9 21h6"/><path d="M12 17v4"/></symbol>
+<symbol id="ico-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></symbol>
+</defs>
+</svg>
 <div id="toast-area" class="toast-area"></div>
 <div class="app-shell">
 
@@ -261,28 +272,28 @@ textarea.fi{min-height:70px;resize:vertical;}
     <div class="sync-badge sync-ok" id="sync-status">● Gesynchroniseerd</div>
   </div>
   <a class="nav-item active" data-tab="home" onclick="showTab(this)">
-    <i class="ti ti-home"></i><span>Home</span>
+    <svg class="ico"><use href="#ico-home"></use></svg><span>Home</span>
   </a>
   <div class="nav-section">Planning</div>
   <a class="nav-item" data-tab="events" onclick="showTab(this)">
-    <i class="ti ti-star"></i><span>Events</span>
+    <svg class="ico"><use href="#ico-star"></use></svg><span>Events</span>
   </a>
   <a class="nav-item" data-tab="nieuwsbrief" onclick="showTab(this)">
-    <i class="ti ti-mail"></i><span>Nieuwsbrief</span>
+    <svg class="ico"><use href="#ico-mail"></use></svg><span>Nieuwsbrief</span>
   </a>
   <a class="nav-item" data-tab="ideeen" onclick="showTab(this)">
-    <i class="ti ti-bulb"></i><span>Ideeënbank</span>
+    <svg class="ico"><use href="#ico-bulb"></use></svg><span>Ideeënbank</span>
   </a>
   <div class="nav-section">Team</div>
   <a class="nav-item" data-tab="todo" onclick="showTab(this)">
-    <i class="ti ti-checklist"></i><span>To-Do</span>
+    <svg class="ico"><use href="#ico-checklist"></use></svg><span>To-Do</span>
   </a>
   <div class="nav-section">Winkel</div>
   <a class="nav-item" data-tab="openingsuren" onclick="showTab(this)">
-    <i class="ti ti-clock"></i><span>Openingsuren</span>
+    <svg class="ico"><use href="#ico-clock"></use></svg><span>Openingsuren</span>
   </a>
   <a class="nav-item" data-tab="schermen" onclick="showTab(this)">
-    <i class="ti ti-device-tv"></i><span>Schermen</span>
+    <svg class="ico"><use href="#ico-tv"></use></svg><span>Schermen</span>
   </a>
   <div class="sidebar-footer">
     <button class="btn-refresh" onclick="loadAll()"><i class="ti ti-refresh"></i> Vernieuwen</button>
@@ -297,22 +308,6 @@ textarea.fi{min-height:70px;resize:vertical;}
 <section id="sec-home" class="section active">
   <div class="page-body" style="padding-top:24px;">
     <div class="home-hero">
-      <div class="home-badge">
-        <svg viewBox="0 0 160 160">
-          <defs><path id="homeBadgePath" d="M 80,80 m -64,0 a 64,64 0 1,1 128,0 a 64,64 0 1,1 -128,0"></path></defs>
-          <circle cx="80" cy="80" r="76" fill="none" stroke="#fff" stroke-width="1.5" opacity="0.55"></circle>
-          <text font-family="Montserrat,sans-serif" font-size="10.5" font-weight="700" letter-spacing="2" fill="#fff">
-            <textPath href="#homeBadgePath" startOffset="0%">CARMI TOOLS · EVENTS · CARMI TOOLS ·</textPath>
-          </text>
-          <g transform="translate(80,86)" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M0,-22 l0,-6"></path>
-            <circle cx="0" cy="-25" r="3.2"></circle>
-            <path d="M-22,-6 C-22,-14 -8,-18 0,-18 C8,-18 22,-14 22,-6"></path>
-            <path d="M-22,-6 L0,8 L22,-6"></path>
-            <path d="M-6,5 L6,5"></path>
-          </g>
-        </svg>
-      </div>
       <div class="home-hero-title">Carmi<br>Tools</div>
       <div class="home-hero-tag">plan het mooi,<br>deel het meteen</div>
       <div class="home-stats">
@@ -326,52 +321,52 @@ textarea.fi{min-height:70px;resize:vertical;}
     </div>
     <div class="tool-card-list">
       <div class="tool-card" onclick="goToSection('events')">
-        <div class="tool-card-icon" style="background:var(--pink);"><i class="ti ti-star"></i></div>
+        <div class="tool-card-icon"><svg class="ico"><use href="#ico-star"></use></svg></div>
         <div class="tool-card-body">
           <div class="tool-card-title">Events</div>
           <div class="tool-card-desc">Alle events per winkel en datum</div>
         </div>
-        <div class="tool-card-arrow"><i class="ti ti-arrow-right"></i></div>
+        <div class="tool-card-arrow"><svg class="ico"><use href="#ico-arrow-right"></use></svg></div>
       </div>
       <div class="tool-card" onclick="goToSection('nieuwsbrief')">
-        <div class="tool-card-icon" style="background:var(--cobalt);"><i class="ti ti-mail"></i></div>
+        <div class="tool-card-icon"><svg class="ico"><use href="#ico-mail"></use></svg></div>
         <div class="tool-card-body">
           <div class="tool-card-title">Nieuwsbrief</div>
           <div class="tool-card-desc">Planning van verzendingen</div>
         </div>
-        <div class="tool-card-arrow"><i class="ti ti-arrow-right"></i></div>
+        <div class="tool-card-arrow"><svg class="ico"><use href="#ico-arrow-right"></use></svg></div>
       </div>
       <div class="tool-card" onclick="goToSection('ideeen')">
-        <div class="tool-card-icon" style="background:#f0a500;"><i class="ti ti-bulb"></i></div>
+        <div class="tool-card-icon"><svg class="ico"><use href="#ico-bulb"></use></svg></div>
         <div class="tool-card-body">
           <div class="tool-card-title">Events ideeënbank</div>
           <div class="tool-card-desc">Bewaar ideeën met titel, foto en link</div>
         </div>
-        <div class="tool-card-arrow"><i class="ti ti-arrow-right"></i></div>
+        <div class="tool-card-arrow"><svg class="ico"><use href="#ico-arrow-right"></use></svg></div>
       </div>
       <div class="tool-card" onclick="goToSection('todo')">
-        <div class="tool-card-icon" style="background:#8BC34A;"><i class="ti ti-checklist"></i></div>
+        <div class="tool-card-icon"><svg class="ico"><use href="#ico-checklist"></use></svg></div>
         <div class="tool-card-body">
           <div class="tool-card-title">To-Do</div>
           <div class="tool-card-desc">Taken, deadlines en kalender per persoon</div>
         </div>
-        <div class="tool-card-arrow"><i class="ti ti-arrow-right"></i></div>
+        <div class="tool-card-arrow"><svg class="ico"><use href="#ico-arrow-right"></use></svg></div>
       </div>
       <div class="tool-card" onclick="goToSection('openingsuren')">
-        <div class="tool-card-icon" style="background:#5a2a8a;"><i class="ti ti-clock"></i></div>
+        <div class="tool-card-icon"><svg class="ico"><use href="#ico-clock"></use></svg></div>
         <div class="tool-card-body">
           <div class="tool-card-title">Uren</div>
           <div class="tool-card-desc">Speciale openingsuren per winkel</div>
         </div>
-        <div class="tool-card-arrow"><i class="ti ti-arrow-right"></i></div>
+        <div class="tool-card-arrow"><svg class="ico"><use href="#ico-arrow-right"></use></svg></div>
       </div>
       <div class="tool-card" onclick="goToSection('schermen')">
-        <div class="tool-card-icon" style="background:#1a3a9f;"><i class="ti ti-device-tv"></i></div>
+        <div class="tool-card-icon"><svg class="ico"><use href="#ico-tv"></use></svg></div>
         <div class="tool-card-body">
           <div class="tool-card-title">Schermen</div>
           <div class="tool-card-desc">Inhoud voor de schermen in de winkels</div>
         </div>
-        <div class="tool-card-arrow"><i class="ti ti-arrow-right"></i></div>
+        <div class="tool-card-arrow"><svg class="ico"><use href="#ico-arrow-right"></use></svg></div>
       </div>
     </div>
   </div>
@@ -380,6 +375,7 @@ textarea.fi{min-height:70px;resize:vertical;}
 <!-- EVENTS -->
 <section id="sec-events" class="section">
   <div class="page-header">
+    <button class="btn-back" onclick="goToSection('home')" title="Terug naar home"><svg class="ico"><use href="#ico-arrow-right"></use></svg></button>
     <h1 class="page-title">Events</h1>
     <span style="font-size:12px;color:#aaa;background:var(--cream2);padding:3px 10px;border-radius:var(--r-pill);border:1px solid var(--border);" id="events-count">6 events</span>
     <button class="btn btn-primary btn-sm" style="margin-left:auto;" onclick="openEventForm(null)"><i class="ti ti-plus"></i> Nieuw event</button>
@@ -392,6 +388,7 @@ textarea.fi{min-height:70px;resize:vertical;}
 <!-- NIEUWSBRIEF -->
 <section id="sec-nieuwsbrief" class="section">
   <div class="page-header">
+    <button class="btn-back" onclick="goToSection('home')" title="Terug naar home"><svg class="ico"><use href="#ico-arrow-right"></use></svg></button>
     <h1 class="page-title">Nieuwsbrief</h1>
     <span style="font-size:12px;color:#aaa;background:var(--cream2);padding:3px 10px;border-radius:var(--r-pill);border:1px solid var(--border);" id="nb-count">2 nieuwsbrieven</span>
     <button class="btn btn-primary btn-sm" style="margin-left:auto;" onclick="openNbForm(null)"><i class="ti ti-plus"></i> Toevoegen</button>
@@ -404,6 +401,7 @@ textarea.fi{min-height:70px;resize:vertical;}
 <!-- IDEEËNBANK -->
 <section id="sec-ideeen" class="section">
   <div class="page-header">
+    <button class="btn-back" onclick="goToSection('home')" title="Terug naar home"><svg class="ico"><use href="#ico-arrow-right"></use></svg></button>
     <h1 class="page-title">Events ideeënbank</h1>
     <span style="font-size:12px;color:#aaa;background:var(--cream2);padding:3px 10px;border-radius:var(--r-pill);border:1px solid var(--border);" id="ideeen-count">0 ideeën</span>
     <button class="btn btn-primary btn-sm" style="margin-left:auto;" onclick="openIdeeForm(null)"><i class="ti ti-plus"></i> Nieuw idee</button>
@@ -416,6 +414,7 @@ textarea.fi{min-height:70px;resize:vertical;}
 <!-- OPENINGSUREN -->
 <section id="sec-openingsuren" class="section">
   <div class="page-header">
+    <button class="btn-back" onclick="goToSection('home')" title="Terug naar home"><svg class="ico"><use href="#ico-arrow-right"></use></svg></button>
     <h1 class="page-title">Speciale Openingsuren</h1>
     <span style="font-size:12px;color:#aaa;background:var(--cream2);padding:3px 10px;border-radius:var(--r-pill);border:1px solid var(--border);" id="uren-count">13 items</span>
     <button class="btn btn-primary btn-sm" style="margin-left:auto;" onclick="openUrenForm(null)"><i class="ti ti-plus"></i> Toevoegen</button>
@@ -428,6 +427,7 @@ textarea.fi{min-height:70px;resize:vertical;}
 <!-- SCHERMEN -->
 <section id="sec-schermen" class="section">
   <div class="page-header">
+    <button class="btn-back" onclick="goToSection('home')" title="Terug naar home"><svg class="ico"><use href="#ico-arrow-right"></use></svg></button>
     <h1 class="page-title">Schermen Winkels</h1>
     <span style="font-size:12px;color:#aaa;background:var(--cream2);padding:3px 10px;border-radius:var(--r-pill);border:1px solid var(--border);" id="schermen-count">0 items</span>
     <button class="btn btn-primary btn-sm" style="margin-left:auto;" onclick="openSchermForm(null)"><i class="ti ti-plus"></i> Item toevoegen</button>
@@ -440,6 +440,7 @@ textarea.fi{min-height:70px;resize:vertical;}
 <!-- TO-DO -->
 <section id="sec-todo" class="section">
   <div class="page-header">
+    <button class="btn-back" onclick="goToSection('home')" title="Terug naar home"><svg class="ico"><use href="#ico-arrow-right"></use></svg></button>
     <h1 class="page-title">To-Do</h1>
   </div>
   <div class="page-body" style="padding-top:0;">
@@ -557,33 +558,6 @@ textarea.fi{min-height:70px;resize:vertical;}
 
 </main>
 </div>
-
-<!-- MOBILE NAV -->
-<nav class="mobile-nav">
-  <div class="mobile-nav-row">
-    <button class="mobile-nav-item active" id="mn-home" onclick="mobileTab('home',this)">
-      <i class="ti ti-home"></i><span>Home</span>
-    </button>
-    <button class="mobile-nav-item" id="mn-events" onclick="mobileTab('events',this)">
-      <i class="ti ti-star"></i><span>Events</span>
-    </button>
-    <button class="mobile-nav-item" id="mn-nieuwsbrief" onclick="mobileTab('nieuwsbrief',this)">
-      <i class="ti ti-mail"></i><span>Nieuwsbrief</span>
-    </button>
-    <button class="mobile-nav-item" id="mn-ideeen" onclick="mobileTab('ideeen',this)">
-      <i class="ti ti-bulb"></i><span>Ideeën</span>
-    </button>
-    <button class="mobile-nav-item" id="mn-openingsuren" onclick="mobileTab('openingsuren',this)">
-      <i class="ti ti-clock"></i><span>Uren</span>
-    </button>
-    <button class="mobile-nav-item" id="mn-schermen" onclick="mobileTab('schermen',this)">
-      <i class="ti ti-device-tv"></i><span>Schermen</span>
-    </button>
-    <button class="mobile-nav-item" id="mn-todo" onclick="mobileTab('todo',this)">
-      <i class="ti ti-checklist"></i><span>To-Do</span>
-    </button>
-  </div>
-</nav>
 
 <!-- EVENT MODAL -->
 <div class="modal-bg" id="event-bg" onclick="if(event.target===this)closeEventForm()">
@@ -792,13 +766,10 @@ async function loadAll() {
   }
 }
 
-// ── GOTO (homescherm kaarten) ──
+// ── GOTO (homescherm kaarten + terugknop) ──
 function goToSection(tab) {
   const el = document.querySelector('.nav-item[data-tab="'+tab+'"]');
   if (el) showTab(el);
-  document.querySelectorAll('.mobile-nav-item').forEach(b=>b.classList.remove('active'));
-  const mnEl = document.getElementById('mn-'+tab);
-  if (mnEl) mnEl.classList.add('active');
   window.scrollTo({top:0,behavior:'instant'});
 }
 
@@ -809,13 +780,6 @@ function showTab(el) {
   document.getElementById('sec-'+t).classList.add('active');
   el.classList.add('active');
   if (t === 'todo') renderAllTodo();
-}
-
-function mobileTab(tab, btn) {
-  const desktopLink = document.querySelector('.nav-item[data-tab="'+tab+'"]');
-  if (desktopLink) showTab(desktopLink);
-  document.querySelectorAll('.mobile-nav-item').forEach(b=>b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
 }
 
 function fmtDate(d) {
