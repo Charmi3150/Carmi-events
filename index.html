@@ -1140,7 +1140,10 @@ async function saveIdee() {
       ideeenData.unshift(res[0]||{...data,id:Date.now()});
     }
     syncStatus('ok','Opgeslagen'); toast('Idee opgeslagen!','success'); closeIdeeForm(); renderIdeeen();
-  } catch(e) { syncStatus('err','Fout'); toast('Fout bij opslaan van de foto of het idee','error'); console.error(e); }
+  } catch(e) {
+    syncStatus('err','Fout'); console.error(e);
+    alert('Fout bij opslaan:\n\n' + (e && e.message ? e.message : e));
+  }
 }
 
 async function deleteIdee(id) {
